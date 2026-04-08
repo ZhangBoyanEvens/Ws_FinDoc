@@ -1,9 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
-import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
+import {
+  BrowserRouter,
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useSearchParams,
+} from 'react-router-dom'
 import { gsap } from 'gsap'
 import Splitting from 'splitting'
 import 'splitting/dist/splitting.css'
 import 'splitting/dist/splitting-cells.css'
+import undrawNewsEditor from './assets/undraw_news-editor_5nnl.svg'
+import undrawWebSearch from './assets/undraw_web-search_7oif.svg'
+import undrawData from './assets/undraw_data_25jw.svg'
+import { FinDocOnScrollOverviewPage } from './onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import './App.css'
 
 /** 与 MorphSVG 示例同构：始终用一条二次贝塞尔 `Q`，顶缘为平滑弧线，不做多边形插值 */
@@ -13,6 +26,79 @@ function demoCurtainPathD(ySide, yPeak) {
 
 const DEMO_PATH_HIDDEN = demoCurtainPathD(100, 100)
 const DEMO_PATH_FULL = demoCurtainPathD(0, 0)
+
+/**
+ * 三张同系办公室底图 + 各 undraw：FinDoc news-editor，Vetra web-search，Arbix data
+ */
+const MENU_DEMO_OFFICE_BACKGROUNDS = [
+  'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1440&h=1080&fit=crop&q=80',
+]
+const MENU_DEMO_BG_CAROUSEL = [
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1462899006636-339e08d1844e?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1497366412874-3415097a27e7?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1440&h=1080&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1440&h=1080&fit=crop&q=80',
+]
+const MENU_ITEMS = [
+  {
+    id: 'findoc',
+    title: 'FinDoc',
+    subtitle: 'Report Automation',
+    subtitleText: 'Report Automation',
+    themeClass: 'theme-findoc',
+    trailColor: 'rgba(22, 163, 74, 0.55)',
+    overviewPath: '/FinDocOverviewPage',
+    basePath: '/findoc',
+    slideClass: 'menuDemoLandscape__slide--findoc',
+    undraw: { src: undrawNewsEditor, width: 787, height: 389 },
+  },
+  {
+    id: 'vetra',
+    title: 'Vetra',
+    subtitle: 'Enterprise Screening and Due Diligence',
+    subtitleText: 'Enterprise Screening & Due Diligence',
+    themeClass: 'theme-vetra',
+    trailColor: 'rgba(37, 99, 235, 0.55)',
+    overviewPath: '/VetraOverviewPage',
+    basePath: '/vetra',
+    slideClass: 'menuDemoLandscape__slide--vetra',
+    undraw: { src: undrawWebSearch, width: 960, height: 770 },
+  },
+  {
+    id: 'arbix',
+    title: 'Arbix',
+    subtitle: 'Cross Platform Price Arbitrage Monitor',
+    subtitleText: 'Cross-Platform Price Arbitrage Monitor',
+    themeClass: 'theme-arbix',
+    trailColor: 'rgba(220, 38, 38, 0.55)',
+    overviewPath: '/ArbixOverviewPage',
+    basePath: '/arbix',
+    slideClass: 'menuDemoLandscape__slide--arbix',
+    undraw: { src: undrawData, width: 960, height: 601 },
+  },
+]
+
+/** 从 overview 等返回菜单时带上 ?demo=1，MenuPage 据此恢复 Demo 开关与帘幕终态 */
+const MENU_DEMO_QUERY = 'demo'
+const MENU_DEMO_QUERY_VALUE = '1'
+const MENU_RESTORE_DEMO_TO = `/menu?${MENU_DEMO_QUERY}=${MENU_DEMO_QUERY_VALUE}`
+
+function readDemoParamFromWindow() {
+  if (typeof window === 'undefined') return false
+  try {
+    return new URLSearchParams(window.location.search).get(MENU_DEMO_QUERY) === MENU_DEMO_QUERY_VALUE
+  } catch {
+    return false
+  }
+}
 
 function flushCurtainPath(pathEl, ySide, yPeak) {
   pathEl.setAttribute(
@@ -63,7 +149,7 @@ function playDemoCurtainOut(pathEl, onComplete) {
     })
 }
 
-function ThemedDocPage({ brandName, themeClass, trailColor }) {
+function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -193,9 +279,15 @@ function ThemedDocPage({ brandName, themeClass, trailColor }) {
             <a className="finNavLink button button--pan" href="#">
               <span>Overview</span>
             </a>
-            <a className="finNavLink button button--pan" href="#">
-              <span>Features</span>
-            </a>
+            {featuresTo ? (
+              <Link className="finNavLink button button--pan" to={featuresTo}>
+                <span>Features</span>
+              </Link>
+            ) : (
+              <a className="finNavLink button button--pan" href="#">
+                <span>Features</span>
+              </a>
+            )}
             <a className="finNavLink button button--pan" href="#">
               <span>Docs</span>
             </a>
@@ -210,16 +302,20 @@ function ThemedDocPage({ brandName, themeClass, trailColor }) {
 }
 
 function MenuPage() {
+  const location = useLocation()
+  const [, setSearchParams] = useSearchParams()
   const menuRef = useRef(null)
+  const vetraTitleRef = useRef(null)
   const cursorRef = useRef(null)
   const searchInputRef = useRef(null)
   const searchCountRef = useRef(null)
   const rafRef = useRef(0)
   const turbulenceTlRef = useRef(null)
-  const enterTlsRef = useRef([])
-  const leaveTlsRef = useRef([])
-  const [demoMode, setDemoMode] = useState(false)
-  const [curtainVisible, setCurtainVisible] = useState(false)
+  const [demoMode, setDemoMode] = useState(readDemoParamFromWindow)
+  const [curtainVisible, setCurtainVisible] = useState(readDemoParamFromWindow)
+  /** 默认 1 = Vetra，与竖直锚点对齐；离开菜单栏时回中间张 */
+  const [landscapeSlideIndex, setLandscapeSlideIndex] = useState(1)
+  const [bgCarouselIndex, setBgCarouselIndex] = useState(0)
   const demoModeRef = useRef(demoMode)
   const demoPathRef = useRef(null)
   const curtainTlRef = useRef(null)
@@ -235,6 +331,26 @@ function MenuPage() {
   useEffect(() => {
     demoModeRef.current = demoMode
   }, [demoMode])
+
+  useLayoutEffect(() => {
+    const q = new URLSearchParams(location.search).get(MENU_DEMO_QUERY)
+    if (q !== MENU_DEMO_QUERY_VALUE) return
+    curtainTlRef.current?.kill()
+    curtainTlRef.current = null
+    flushSync(() => {
+      setDemoMode(true)
+      setCurtainVisible(true)
+    })
+    const p = demoPathRef.current
+    if (p) p.setAttribute('d', DEMO_PATH_FULL)
+    requestAnimationFrame(() => {
+      const chars = menuRef.current?.querySelectorAll('.menu__item-title .char')
+      if (chars?.length) {
+        titleColorTlRef.current?.kill()
+        gsap.set(chars, { color: '#000000' })
+      }
+    })
+  }, [location.search])
 
   const onDemoModeChange = (e) => {
     const next = e.target.checked
@@ -276,20 +392,29 @@ function MenuPage() {
     applyTitleColor()
 
     if (next) {
-      setCurtainVisible(true)
-      setDemoMode(true)
-      queueMicrotask(() => {
-        const p = demoPathRef.current
-        if (!p) return
+      flushSync(() => {
+        setCurtainVisible(true)
+        setDemoMode(true)
+      })
+      const p = demoPathRef.current
+      if (p) {
         p.setAttribute('d', DEMO_PATH_HIDDEN)
         curtainTlRef.current = playDemoCurtainIn(p, () => {
           curtainTlRef.current = null
         })
-      })
+      }
       return
     }
 
     setDemoMode(false)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete(MENU_DEMO_QUERY)
+        return next
+      },
+      { replace: true },
+    )
     if (!path) {
       setCurtainVisible(false)
       return
@@ -307,6 +432,12 @@ function MenuPage() {
     if (!root || !cursor) return
 
     Splitting({ target: root.querySelectorAll('[data-splitting]') })
+
+    const vt = vetraTitleRef.current
+    if (vt) {
+      const r = vt.getBoundingClientRect()
+      root.style.setProperty('--menu-demo-landscape-top', `${r.top + r.height / 2}px`)
+    }
 
     const menuLinks = root.querySelectorAll('.menu__item')
     const allLinks = root.querySelectorAll('a')
@@ -400,32 +531,41 @@ function MenuPage() {
         const colorInitial = demoModeRef.current ? '#000000' : '#ffffff'
         const colorFinal = demoModeRef.current ? '#38bdf8' : '#f87171'
 
-        leaveTlsRef.current.forEach((tl) => tl.kill())
-        const tl = gsap
-          .timeline({
-            defaults: {
+        gsap.killTweensOf(chars)
+        gsap.set(chars, { color: colorInitial })
+        gsap
+          .timeline()
+          .to(
+            chars,
+            {
+              repeat: 1,
+              repeatRefresh: true,
               duration: 0.06,
               ease: 'power3',
               x: () => gsap.utils.random(-12, 12),
               y: () => gsap.utils.random(-14, 8),
               rotation: () => gsap.utils.random(-4, 4),
-              color: () =>
-                gsap.utils.random(0, 3) < 0.5 ? colorFinal : colorInitial,
             },
-          })
-          .to(chars, { repeat: 1, repeatRefresh: true }, 0)
-          .to(chars, { x: 0, y: 0, rotation: 0, color: colorFinal, duration: 0.12 }, '+=0.02')
-        enterTlsRef.current.push(tl)
+            0,
+          )
+          .to(
+            chars,
+            { x: 0, y: 0, rotation: 0, color: colorFinal, duration: 0.12, ease: 'power3.out' },
+            '+=0.02',
+          )
       }
 
       const onLeave = () => {
         const colorInitial = demoModeRef.current ? '#000000' : '#ffffff'
-        const tl = gsap.to(chars, {
-          duration: 0.4,
-          ease: 'power3',
+        gsap.killTweensOf(chars)
+        gsap.to(chars, {
+          duration: 0.28,
+          ease: 'power3.out',
           color: colorInitial,
+          x: 0,
+          y: 0,
+          rotation: 0,
         })
-        leaveTlsRef.current.push(tl)
       }
 
       el.addEventListener('mouseenter', onEnter)
@@ -443,8 +583,7 @@ function MenuPage() {
       cancelAnimationFrame(rafRef.current)
       window.removeEventListener('mousemove', onMove)
       turbulenceTlRef.current?.kill()
-      enterTlsRef.current.forEach((tl) => tl.kill())
-      leaveTlsRef.current.forEach((tl) => tl.kill())
+      gsap.killTweensOf(root.querySelectorAll('.menu__item-title .char'))
       menuEnterHandlers.forEach(([el, fn]) => el.removeEventListener('mouseenter', fn))
       menuLeaveHandlers.forEach(([el, fn]) => el.removeEventListener('mouseleave', fn))
       allLinks.forEach((el) => {
@@ -452,6 +591,13 @@ function MenuPage() {
         el.removeEventListener('mouseleave', onLinkLeave)
       })
     }
+  }, [])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setBgCarouselIndex((prev) => (prev + 1) % MENU_DEMO_BG_CAROUSEL.length)
+    }, 3000)
+    return () => window.clearInterval(timer)
   }, [])
 
   useEffect(() => {
@@ -516,9 +662,38 @@ function MenuPage() {
     }
   }, [])
 
+  useLayoutEffect(() => {
+    const shell = menuRef.current
+    const titleEl = vetraTitleRef.current
+    if (!shell || !titleEl) return
+
+    const syncLandscapeTop = () => {
+      const r = titleEl.getBoundingClientRect()
+      shell.style.setProperty('--menu-demo-landscape-top', `${r.top + r.height / 2}px`)
+    }
+
+    syncLandscapeTop()
+
+    const menuNav = shell.querySelector('.menu')
+    const menuMain = shell.querySelector('.menuMain')
+    const ro = new ResizeObserver(syncLandscapeTop)
+    ro.observe(titleEl)
+    if (menuNav) ro.observe(menuNav)
+
+    window.addEventListener('resize', syncLandscapeTop)
+    menuMain?.addEventListener('scroll', syncLandscapeTop, { passive: true })
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', syncLandscapeTop)
+      menuMain?.removeEventListener('scroll', syncLandscapeTop)
+    }
+  }, [])
+
   return (
     <main
-      className={`menuPage menuShell${demoMode || curtainVisible ? ' menuShell--demoMode' : ''}`}
+      className={`menuPage menuShell${
+        demoMode || curtainVisible ? ' menuShell--demoChrome' : ''
+      }${demoMode ? ' menuShell--demoShift' : ''}`}
       ref={menuRef}
       aria-label="menu page"
     >
@@ -591,50 +766,97 @@ function MenuPage() {
             <div className="menuSearch__meta" ref={searchCountRef} />
           </div>
 
+        <div className="menuDemoLandscape" aria-hidden="true">
+          <div className="menuDemoLandscape__bgCarousel">
+            <div
+              className="menuDemoLandscape__bgTrack"
+              style={{ transform: `translateX(-${bgCarouselIndex * 10}%)` }}
+            >
+              {MENU_DEMO_BG_CAROUSEL.map((src, idx) => (
+                <img
+                  key={`${idx}-${src}`}
+                  className="menuDemoLandscape__staticBg"
+                  src={src}
+                  alt=""
+                  width={1440}
+                  height={1080}
+                  decoding="async"
+                />
+              ))}
+            </div>
+            <div className="menuDemoLandscape__bgNav">
+              <button
+                type="button"
+                className="menuDemoLandscape__bgArrow"
+                onClick={() =>
+                  setBgCarouselIndex(
+                    (prev) => (prev - 1 + MENU_DEMO_BG_CAROUSEL.length) % MENU_DEMO_BG_CAROUSEL.length,
+                  )
+                }
+                aria-label="Previous office photo"
+              >
+                &larr;
+              </button>
+              <button
+                type="button"
+                className="menuDemoLandscape__bgArrow"
+                onClick={() => setBgCarouselIndex((prev) => (prev + 1) % MENU_DEMO_BG_CAROUSEL.length)}
+                aria-label="Next office photo"
+              >
+                &rarr;
+              </button>
+            </div>
+          </div>
+          <div
+            className="menuDemoLandscape__track"
+            style={{
+              transform: `translateY(calc(${-landscapeSlideIndex} * 100% / 3))`,
+            }}
+          >
+            {MENU_ITEMS.map((item) => (
+              <div className={`menuDemoLandscape__slide ${item.slideClass}`} key={`${item.id}-slide`}>
+                <div className="menuDemoLandscape__slideFore">
+                  <img
+                    className="menuDemoLandscape__undraw"
+                    src={item.undraw.src}
+                    alt=""
+                    width={item.undraw.width}
+                    height={item.undraw.height}
+                    decoding="async"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <nav
           className="menu"
           aria-label="city menu"
           aria-hidden={curtainVisible && !demoMode}
+          onMouseLeave={() => setLandscapeSlideIndex(1)}
         >
-            <Link
-              to="/findoc"
-              className="menu__item"
-              data-title="FinDoc"
-              data-subtitle="Report Automation"
-            >
-              <span data-splitting="" className="menu__item-title">
-                FinDoc
-              </span>
-              <span data-splitting="" className="menu__item-sub menu__item-sub--findoc">
-                Report Automation
-              </span>
-            </Link>
-            <Link
-              to="/vetra"
-              className="menu__item"
-              data-title="Vetra"
-              data-subtitle="Enterprise Screening and Due Diligence"
-            >
-              <span data-splitting="" className="menu__item-title">
-                Vetra
-              </span>
-              <span data-splitting="" className="menu__item-sub menu__item-sub--vetra">
-                Enterprise Screening & Due Diligence
-              </span>
-            </Link>
-            <Link
-              to="/arbix"
-              className="menu__item"
-              data-title="Arbix"
-              data-subtitle="Cross Platform Price Arbitrage Monitor"
-            >
-              <span data-splitting="" className="menu__item-title">
-                Arbix
-              </span>
-              <span data-splitting="" className="menu__item-sub menu__item-sub--arbix">
-                Cross-Platform Price Arbitrage Monitor
-              </span>
-            </Link>
+            {MENU_ITEMS.map((item, idx) => (
+              <Link
+                key={item.id}
+                to={demoMode ? item.overviewPath : item.basePath}
+                className="menu__item"
+                data-title={item.title}
+                data-subtitle={item.subtitle}
+                onMouseEnter={() => setLandscapeSlideIndex(idx)}
+              >
+                <span
+                  ref={item.id === 'vetra' ? vetraTitleRef : undefined}
+                  data-splitting=""
+                  className="menu__item-title"
+                >
+                  {item.title}
+                </span>
+                <span data-splitting="" className={`menu__item-sub menu__item-sub--${item.id}`}>
+                  {item.subtitleText}
+                </span>
+              </Link>
+            ))}
         </nav>
       </div>
 
@@ -715,33 +937,20 @@ function MenuPage() {
   )
 }
 
-function FindocPage() {
+/** Demo 模式下各 title 独立 overview，暂时留白，仅保留返回菜单入口 */
+function DemoTitleOverviewPage({ title }) {
   return (
-    <ThemedDocPage
-      brandName="FinDoc"
-      themeClass="theme-findoc"
-      trailColor="rgba(22, 163, 74, 0.55)"
-    />
-  )
-}
-
-function VetraPage() {
-  return (
-    <ThemedDocPage
-      brandName="Vetra"
-      themeClass="theme-vetra"
-      trailColor="rgba(37, 99, 235, 0.55)"
-    />
-  )
-}
-
-function ArbixPage() {
-  return (
-    <ThemedDocPage
-      brandName="Arbix"
-      themeClass="theme-arbix"
-      trailColor="rgba(220, 38, 38, 0.55)"
-    />
+    <div className="demoTitleOverview">
+      <header className="demoTitleOverview__bar">
+        <Link to={MENU_RESTORE_DEMO_TO} className="demoTitleOverview__back">
+          ← Menu
+        </Link>
+        <Link to={MENU_RESTORE_DEMO_TO} className="demoTitleOverview__overviewBtn">
+          Overview
+        </Link>
+      </header>
+      <main className="demoTitleOverview__main" aria-label={`${title} overview (placeholder)`} />
+    </div>
   )
 }
 
@@ -751,9 +960,33 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/menu" replace />} />
         <Route path="/menu" element={<MenuPage />} />
-        <Route path="/findoc" element={<FindocPage />} />
-        <Route path="/vetra" element={<VetraPage />} />
-        <Route path="/arbix" element={<ArbixPage />} />
+        {MENU_ITEMS.map((item) => (
+          <Route
+            key={item.id}
+            path={item.basePath}
+            element={
+              <ThemedDocPage
+                brandName={item.title}
+                themeClass={item.themeClass}
+                trailColor={item.trailColor}
+                featuresTo={item.overviewPath}
+              />
+            }
+          />
+        ))}
+        {MENU_ITEMS.map((item) => (
+          <Route
+            key={`${item.id}-overview`}
+            path={item.overviewPath}
+            element={
+              item.id === 'findoc' ? (
+                <FinDocOnScrollOverviewPage />
+              ) : (
+                <DemoTitleOverviewPage title={item.title} />
+              )
+            }
+          />
+        ))}
       </Routes>
     </BrowserRouter>
   )

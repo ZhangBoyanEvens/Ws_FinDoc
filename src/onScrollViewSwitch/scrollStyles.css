@@ -1,0 +1,498 @@
+/* Codrops OnScrollViewSwitch：样式限制在挂载容器内，避免污染 FinDoc 全局 */
+.onScrollViewSwitchMount,
+.onScrollViewSwitchMount * {
+  box-sizing: border-box;
+}
+
+.onScrollViewSwitchMount {
+  font-size: 18px;
+  --color-text: #5e5754;
+  --color-title: #944d3e;
+  --color-bg: #080808;
+  --color-link: #5e5754;
+  --color-link-hover: #5e5754;
+  --color-switch-bg: #f1e4dd;
+  --color-switch: #000;
+  --color-switch-active: #c1b7b1;
+  --color-heading: #f1e4dd;
+  --color-caption-body: #e8ded6;
+  scroll-behavior: initial;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  font-family:
+    articulat-cf,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Helvetica,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.onScrollViewSwitchMount .oh {
+  position: relative;
+  overflow: hidden;
+}
+
+.onScrollViewSwitchMount .oh__inner {
+  will-change: transform;
+  display: inline-block;
+}
+
+.onScrollViewSwitchMount .line {
+  transform-origin: 0;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.onScrollViewSwitchMount.js.loading::before,
+.onScrollViewSwitchMount.js.loading::after {
+  content: '';
+  position: fixed;
+  z-index: 1000;
+}
+
+.onScrollViewSwitchMount.js.loading::before {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg);
+}
+
+.onScrollViewSwitchMount.js.loading::after {
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  opacity: 0.4;
+  background: var(--color-link);
+  animation: onScrollLoaderAnim 0.7s linear infinite alternate forwards;
+}
+
+@keyframes onScrollLoaderAnim {
+  to {
+    opacity: 1;
+    transform: scale3d(0.5, 0.5, 1);
+  }
+}
+
+.onScrollViewSwitchMount a {
+  text-decoration: none;
+  color: var(--color-link);
+  outline: none;
+  cursor: pointer;
+}
+
+.onScrollViewSwitchMount a:hover {
+  color: var(--color-link-hover);
+  outline: none;
+}
+
+.onScrollViewSwitchMount a:focus {
+  outline: none;
+  background: lightgrey;
+}
+
+.onScrollViewSwitchMount a:focus:not(:focus-visible) {
+  background: transparent;
+}
+
+.onScrollViewSwitchMount a:focus-visible {
+  outline: 2px solid red;
+  background: transparent;
+}
+
+.onScrollViewSwitchMount .unbutton {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  color: currentColor;
+}
+
+.onScrollViewSwitchMount .unbutton:focus {
+  outline: none;
+}
+
+.onScrollViewSwitchMount .frame {
+  position: relative;
+  color: var(--color-title);
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto auto auto;
+  grid-template-areas: 'title' 'prev' 'sponsor';
+  justify-content: start;
+  justify-items: start;
+  margin-bottom: 3rem;
+  grid-gap: 0.5rem;
+}
+
+.onScrollViewSwitchMount .frame a:not(.frame__title-back) {
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+}
+
+.onScrollViewSwitchMount .frame a:not(.frame__title-back)::before {
+  content: '';
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  position: absolute;
+  top: 90%;
+  transition: transform 0.3s;
+  transform-origin: 0% 50%;
+}
+
+.onScrollViewSwitchMount .frame a:not(.frame__title-back):hover::before {
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+}
+
+.onScrollViewSwitchMount .frame__title {
+  grid-area: title;
+  display: flex;
+  align-items: flex-end;
+}
+
+.onScrollViewSwitchMount .frame__title-main {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: normal;
+}
+
+.onScrollViewSwitchMount .frame__title-back {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 0.15rem;
+}
+
+.onScrollViewSwitchMount .frame__title-back span {
+  display: none;
+}
+
+.onScrollViewSwitchMount .frame__title-back svg {
+  fill: currentColor;
+}
+
+.onScrollViewSwitchMount .frame__prev {
+  grid-area: prev;
+}
+
+.onScrollViewSwitchMount .heading {
+  position: fixed;
+  top: 6rem;
+  left: 0;
+  width: 100%;
+  z-index: 200;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+}
+
+/* 入场动画包一层，避免与 ScrollTrigger 写在 h2 上的 x 冲突；inline-block 与 .heading__sub 同一行排布 */
+.onScrollViewSwitchMount .onScrollViewSwitchMount__headingMainEnter {
+  display: inline-block;
+  overflow: visible;
+  will-change: transform;
+  vertical-align: top;
+  max-width: 100%;
+}
+
+.onScrollViewSwitchMount .heading__main {
+  display: inline-block;
+  color: var(--color-heading);
+  font-weight: 300;
+  font-size: clamp(2rem, 10vw, 5.5rem);
+  white-space: nowrap;
+  margin: 0;
+  margin-left: calc(13.25vw + 25vw + 1vw);
+  line-height: 0.8;
+  text-transform: uppercase;
+  margin-top: 1rem;
+  will-change: transform;
+}
+
+.onScrollViewSwitchMount .heading__sub {
+  display: inline-block;
+  margin-left: calc(13.25vw + 25vw + 1vw + 1rem);
+  color: var(--color-heading);
+  font-size: 0.85rem;
+}
+
+.onScrollViewSwitchMount .switch {
+  padding: 1rem 1.5rem;
+  position: fixed;
+  background: var(--color-switch-bg);
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  z-index: 100;
+  border-radius: 3rem;
+}
+
+.onScrollViewSwitchMount .switch::after {
+  content: '';
+  width: 1px;
+  height: calc(100% - 2rem);
+  position: absolute;
+  left: 50%;
+  background: var(--color-switch-active);
+}
+
+.onScrollViewSwitchMount .switch__button {
+  display: flex;
+  margin: 0 0.5rem;
+  padding: 0 0.25rem;
+  fill: var(--color-switch);
+}
+
+.onScrollViewSwitchMount .switch__button--current {
+  fill: var(--color-switch-active);
+  pointer-events: none;
+}
+
+.onScrollViewSwitchMount .switch__button svg {
+  pointer-events: none;
+}
+
+.onScrollViewSwitchMount .content {
+  position: relative;
+  padding: 28vh 13.25vw 2.5rem;
+}
+
+.onScrollViewSwitchMount.grid-open {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.onScrollViewSwitchMount.grid-open .content {
+  pointer-events: none;
+}
+
+.onScrollViewSwitchMount .item {
+  grid-gap: 8vh;
+  grid-template-columns: 100%;
+  align-content: start;
+  justify-content: center;
+  display: grid;
+  grid-template-areas: 'caption' 'img';
+  margin: 0 auto 22vh;
+}
+
+/* 04：仅交换图文栅格位置，DOM 顺序不变（Flip/GSAP 不受影响） */
+.onScrollViewSwitchMount .item.item--imageFirst {
+  grid-template-areas: 'img' 'caption';
+}
+
+.onScrollViewSwitchMount .item.item--imageFirst .item__image-wrap {
+  margin-top: 0;
+}
+
+.onScrollViewSwitchMount .item.item--imageFirst .item__caption {
+  margin-top: 0.75rem;
+}
+
+.onScrollViewSwitchMount .item__image-wrap {
+  grid-area: img;
+  width: 100%;
+  max-width: min(100%, 42rem);
+  aspect-ratio: 800/500;
+  justify-self: center;
+  margin-top: 0.75rem;
+}
+
+.onScrollViewSwitchMount .item__image {
+  width: 100%;
+  aspect-ratio: 800/500;
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.onScrollViewSwitchMount .item__image-inner {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  will-change: transform;
+}
+
+.onScrollViewSwitchMount .item__image-inner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 略压低取景中心，弱化顶部与长标题在视觉上的竞争 */
+  object-position: center 42%;
+  pointer-events: none;
+}
+
+.onScrollViewSwitchMount .item__caption {
+  grid-area: caption;
+  position: relative;
+  z-index: 10;
+}
+
+.onScrollViewSwitchMount .item__caption-title {
+  white-space: normal;
+  width: 100%;
+  max-width: 28rem;
+  line-height: 1.15;
+  font-size: clamp(1.35rem, 4.2vw, 2.75rem);
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-title);
+}
+
+.onScrollViewSwitchMount .item__caption-description {
+  max-width: min(32rem, 100%);
+  margin: 0.65rem 0 0;
+  font-size: clamp(1.05rem, 2.35vw, 1.28rem);
+  line-height: 1.45;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--color-caption-body);
+  text-wrap: balance;
+}
+
+.onScrollViewSwitchMount .item__caption-descriptionEmphasis {
+  font-weight: 700;
+  color: var(--color-title);
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-title) 45%, transparent);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.12em;
+}
+
+.onScrollViewSwitchMount .item__caption-number {
+  display: inline-block;
+}
+
+.onScrollViewSwitchMount .grid {
+  width: 100%;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 1rem;
+  height: 100vh;
+  left: 0;
+  align-content: center;
+  padding: 2rem;
+}
+
+.onScrollViewSwitchMount.grid-open .grid {
+  pointer-events: auto;
+}
+
+.onScrollViewSwitchMount .grid .item__image {
+  cursor: not-allowed;
+}
+
+.onScrollViewSwitchMount .grid .item__image:nth-child(1) {
+  grid-row: 1;
+  grid-column: 1;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(2) {
+  grid-row: 1;
+  grid-column: 2;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(3) {
+  grid-row: 1;
+  grid-column: 3;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(4) {
+  grid-row: 2;
+  grid-column: 1;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(5) {
+  grid-row: 2;
+  grid-column: 3;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(6) {
+  grid-row: 2;
+  grid-column: 5;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(7) {
+  grid-row: 3;
+  grid-column: 1;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(8) {
+  grid-row: 3;
+  grid-column: 2;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(9) {
+  grid-row: 3;
+  grid-column: 4;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(10) {
+  grid-row: 4;
+  grid-column: 1;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(11) {
+  grid-row: 4;
+  grid-column: 3;
+}
+.onScrollViewSwitchMount .grid .item__image:nth-child(12) {
+  grid-row: 4;
+  grid-column: 5;
+}
+
+@media screen and (min-width: 53em) {
+  .onScrollViewSwitchMount .frame {
+    grid-column-gap: 2rem;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    grid-template-areas: 'title prev' 'sponsor ...';
+  }
+  .onScrollViewSwitchMount .item {
+    grid-gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    grid-template-areas: 'caption img';
+    align-items: start;
+  }
+  .onScrollViewSwitchMount .content {
+    padding-top: 48vh;
+  }
+  .onScrollViewSwitchMount .item__image-wrap {
+    max-width: min(100%, 36vw);
+    margin-top: 0.35rem;
+    justify-self: end;
+  }
+
+  .onScrollViewSwitchMount .item.item--imageFirst {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    grid-template-areas: 'img caption';
+  }
+
+  .onScrollViewSwitchMount .item.item--imageFirst .item__caption {
+    margin-top: 0;
+  }
+
+  .onScrollViewSwitchMount .item.item--imageFirst .item__image-wrap {
+    justify-self: start;
+    margin-top: 0.35rem;
+  }
+
+  .onScrollViewSwitchMount .heading {
+    top: 0;
+  }
+  .onScrollViewSwitchMount .grid {
+    left: calc((100vw - 950px) / 2);
+    max-width: 950px;
+  }
+}

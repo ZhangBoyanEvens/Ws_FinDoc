@@ -416,6 +416,16 @@
 }
 
 .menuShell {
+  --menu-demo-motion-dur: 1.15s;
+  --menu-demo-motion-ease: cubic-bezier(0.12, 0.78, 0.18, 1);
+  /* 切图：略缩短时长 + 前快后慢（快出慢进感） */
+  --menu-demo-landscape-slide-dur: 0.46s;
+  --menu-demo-landscape-slide-ease: cubic-bezier(0.73, 0, 0.26, 1);
+  --menu-demo-landscape-top: clamp(28vh, 12vh + 12rem, 42vh);
+  /* 竖直仅跟 Vetra 标题中线（JS 写 --menu-demo-landscape-top），此处不设额外下移 */
+  --menu-demo-landscape-nudge-y: 0px;
+  /* 竖线锚点（略左于右半区中线 75vw） */
+  --menu-demo-landscape-left: 71vw;
   --menu-pad: clamp(0.75rem, 2.8vw, 1.75rem);
   --color-text: #e5e7eb;
   --color-bg: #000000;
@@ -437,20 +447,193 @@
   isolation: isolate;
 }
 
-.menuShell.menuShell--demoMode {
-  overflow: hidden;
-  --color-menu: #000000;
-}
-
-.menuShell.menuShell--demoMode .menuMain {
+/* 帘幕可见期间：裁切滚动、标题叠在帘幕上（与是否左移无关，避免退出 Demo 后还要等帘幕结束才回位） */
+.menuShell.menuShell--demoChrome {
   overflow: hidden;
 }
 
-/* Demo mode：帘幕在标题之下，保留大标题与副标题可见、可点 */
-.menuShell.menuShell--demoMode .menu {
+.menuShell.menuShell--demoChrome .menuMain {
+  overflow: hidden;
+}
+
+.menuShell.menuShell--demoChrome .menu {
   position: relative;
   z-index: 8;
   pointer-events: auto;
+}
+
+/* 仅在 Demo mode 为 on：黑字 + 左移（切回 Work 立刻去掉，与被幕动画解耦） */
+.menuShell.menuShell--demoShift {
+  --color-menu: #000000;
+}
+
+.menuShell.menuShell--demoShift .menu {
+  will-change: transform;
+  transform: translateX(-25vw);
+}
+
+/* Demo 右侧风景占位：与 title 同速滑入；水平由 --menu-demo-landscape-left，竖直由 JS 写 --menu-demo-landscape-top；内层 track 纵向切图 */
+.menuShell .menuDemoLandscape {
+  position: fixed;
+  left: var(--menu-demo-landscape-left);
+  top: var(--menu-demo-landscape-top);
+  width: min(76.5vw, 40.5rem);
+  max-height: min(63vh, 31.5rem);
+  height: auto;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 0.65rem;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 16px 48px rgba(0, 0, 0, 0.45);
+  z-index: 7;
+  pointer-events: none;
+  transition: transform var(--menu-demo-motion-dur) var(--menu-demo-motion-ease);
+  transition-delay: 0s;
+  /* Work：translateX = (100vw - left) + 50% 自身宽，中心落到 100vw + 半宽，整图在视口右外 */
+  transform: translate(
+      calc(100vw - var(--menu-demo-landscape-left) + 50%),
+      calc(-50% + var(--menu-demo-landscape-nudge-y))
+    );
+}
+
+.menuShell .menuDemoLandscape__track {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 300%;
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+  transition: transform var(--menu-demo-landscape-slide-dur) var(--menu-demo-landscape-slide-ease);
+}
+
+.menuShell .menuDemoLandscape__img {
+  flex: 0 0 calc(100% / 3);
+  width: 100%;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+}
+
+/* FinDoc / Vetra / Arbix：办公室底图 + 居中 undraw，留白由 slideFore padding 控制 */
+.menuShell .menuDemoLandscape__slide--findoc,
+.menuShell .menuDemoLandscape__slide--vetra,
+.menuShell .menuDemoLandscape__slide--arbix {
+  flex: 0 0 calc(100% / 3);
+  width: 100%;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.menuShell .menuDemoLandscape__staticBg {
+  flex: 0 0 10%;
+  width: 10%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.menuShell .menuDemoLandscape__bgCarousel {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.menuShell .menuDemoLandscape__bgTrack {
+  display: flex;
+  width: 1000%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.28, 0.84, 0.22, 1);
+  will-change: transform;
+}
+
+.menuShell .menuDemoLandscape__bgNav {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.35rem, 1.2vw, 0.75rem);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  z-index: 4;
+}
+
+.menuShell .menuDemoLandscape__bgArrow {
+  width: clamp(1.75rem, 2vw, 2rem);
+  height: clamp(1.75rem, 2vw, 2rem);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(9, 9, 14, 0.45);
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.menuShell .menuDemoLandscape__bgArrow:hover {
+  background: rgba(9, 9, 14, 0.72);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.menuShell .menuDemoLandscape__slideBg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.menuShell .menuDemoLandscape__slideFore {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.42rem, 2vw, 1rem);
+  box-sizing: border-box;
+}
+
+.menuShell .menuDemoLandscape__undraw {
+  max-width: min(88%, 22rem);
+  max-height: 78%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.38));
+}
+
+.menuShell.menuShell--demoShift .menuDemoLandscape {
+  transform: translate(-50%, calc(-50% + var(--menu-demo-landscape-nudge-y)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuShell .menuDemoLandscape {
+    transition: none;
+    transform: translate(-50%, calc(-50% + var(--menu-demo-landscape-nudge-y)));
+  }
+
+  .menuShell:not(.menuShell--demoShift) .menuDemoLandscape {
+    transform: translate(
+      calc(100vw - var(--menu-demo-landscape-left) + 50%),
+      calc(-50% + var(--menu-demo-landscape-nudge-y))
+    );
+  }
+
+  .menuShell .menuDemoLandscape__track {
+    transition: none;
+  }
 }
 
 .menuShell::before {
@@ -516,11 +699,13 @@
 .menuShell .menuTopBar {
   box-sizing: border-box;
   width: 100%;
-  max-width: min(96%, clamp(18rem, 90vw, 51.25rem));
+  max-width: min(100%, clamp(17rem, min(68vw, 36rem)));
   margin: 1.1rem auto 0;
-  padding-right: var(--menu-neon-gutter);
+  /* 左右同等留白：相对单位、与右上角开关区对齐，搜索视觉上居中有余地不重合 */
+  padding-inline: var(--menu-neon-gutter);
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 0.5rem;
   position: relative;
   z-index: 10;
@@ -615,7 +800,8 @@
 
 .menuShell .menuSearch__meta {
   min-height: 1.2rem;
-  padding-left: 0.5rem;
+  padding-inline: 0.25rem;
+  text-align: center;
   font-size: 0.78rem;
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.58);
@@ -665,6 +851,15 @@
   box-sizing: border-box;
   position: relative;
   z-index: 1;
+  transform: translateX(0);
+  transition: transform var(--menu-demo-motion-dur) var(--menu-demo-motion-ease);
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuShell .menu {
+    transition: none;
+  }
 }
 
 .menuShell .menu__item {
@@ -688,6 +883,11 @@
   line-height: 1;
   font-size: clamp(1.75rem, 6.25vw, 4.25rem);
   font-family: 'Playwrite IE', 'Playwrite Ireland', 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+/* 末态只靠父级 --color-menu（白/黑）；hover 配色仅由 GSAP 短时覆盖 */
+.menuShell .menu__item-title .char {
+  color: inherit;
 }
 
 .menuShell .menu__item-sub {
@@ -720,9 +920,9 @@
   }
 
   .menuShell .menuTopBar {
-    max-width: min(94%, clamp(17rem, 94vw, 40rem));
+    max-width: min(100%, clamp(16rem, min(88vw, 30rem)));
     margin-top: 0.7rem;
-    padding-right: var(--menu-neon-gutter);
+    padding-inline: var(--menu-neon-gutter);
   }
 }
 
@@ -985,4 +1185,159 @@
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* FinDoc overview：内嵌 Codrops OnScrollViewSwitch 全页 */
+.demoTitleOnScroll {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: #080808;
+  position: relative;
+}
+
+/* Parallax 辅助线：与滚动不同步的微位移由 GSAP scrub 驱动 */
+.demoTitleOnScroll__parallaxGuides {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 350;
+  opacity: 0.28;
+  will-change: transform;
+  background-image:
+    linear-gradient(to right, rgba(255, 200, 160, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 200, 160, 0.14) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size:
+    calc(100% / 6) 100%,
+    100% calc(100% / 6),
+    calc(100% / 12) 100%,
+    100% calc(100% / 12);
+  background-position: 0 0, 0 0, 0 0, 0 0;
+  mix-blend-mode: screen;
+}
+
+.demoTitleOnScroll__bar {
+  z-index: 400;
+}
+
+/* ← Menu 右侧、垂直居中贴邻主标题（与 Codrops --color-title 一致） */
+.demoTitleOnScroll__barStart {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+}
+
+.demoTitleOnScroll__barStart > a.demoTitleOnScroll__menuErsa {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.demoTitleOnScroll__heroTrack {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+}
+
+.demoTitleOnScroll__heroTrack .onScrollViewSwitchMount__heroTitle {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 0;
+  color: #944d3e;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+}
+
+.demoTitleOnScroll__heroTrack .demoTitleOnScroll__heroGithubLink {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.demoTitleOnScroll__heroTrack .demoTitleOnScroll__heroGithubLink:hover {
+  color: #c96b56;
+}
+
+.demoTitleOnScroll__heroTrack .demoTitleOnScroll__heroGithubLink:focus {
+  outline: none;
+}
+
+.demoTitleOnScroll__heroTrack .demoTitleOnScroll__heroGithubLink:focus-visible {
+  outline: 2px solid #443ffc;
+  outline-offset: 3px;
+}
+
+.demoTitleOnScroll__heroTrack .onScrollViewSwitchMount__heroGithubSvg {
+  display: block;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.demoTitleOnScroll__stage {
+  flex: 1;
+  min-height: 0;
+  /* 固定顶栏占位，避免首屏与「← Menu」重叠 */
+  padding-top: 3.5rem;
+}
+
+/* Demo 专用 overview 占位页 */
+.demoTitleOverview {
+  min-height: 100svh;
+  box-sizing: border-box;
+  background: #000;
+  color: #e5e7eb;
+  position: relative;
+}
+
+.demoTitleOverview__bar {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  pointer-events: none;
+}
+
+.demoTitleOverview__bar > * {
+  pointer-events: auto;
+}
+
+.demoTitleOverview__back,
+.demoTitleOverview__overviewBtn {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+}
+
+.demoTitleOverview__overviewBtn {
+  margin-left: auto;
+}
+
+.demoTitleOverview__back:hover,
+.demoTitleOverview__overviewBtn:hover {
+  color: #fff;
+}
+
+.demoTitleOverview__main {
+  min-height: 100svh;
 }
