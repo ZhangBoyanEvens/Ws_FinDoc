@@ -12,7 +12,6 @@ import { ExpandImageEffect as ExpandImageEffect5 } from '../../ImageExpansionTyp
 import { GithubMarkIcon } from '../onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import { VetraHeroSignalCanvas } from './VetraHeroSignalCanvas.jsx'
 import { VetraScannerSection } from './VetraScannerSection.jsx'
-import { VetraDifferenceCursor } from './VetraDifferenceCursor.jsx'
 import '../../ImageExpansionTypography-main/css/base.css'
 
 const MENU_RESTORE_DEMO_TO = '/menu?demo=1'
@@ -99,7 +98,6 @@ export function ImageExpansionTypographyPage() {
 
   return (
     <main ref={rootRef} className="demoTitleOnScroll demoTitleOnScroll--vetra">
-      <VetraDifferenceCursor scopeRef={rootRef} />
       <div className="demoTitleOnScroll__parallaxGuides" aria-hidden="true" />
       <header className="demoTitleOverview__bar demoTitleOnScroll__bar">
         <div className="demoTitleOnScroll__barStart">
