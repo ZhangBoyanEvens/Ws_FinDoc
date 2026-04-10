@@ -1770,6 +1770,7 @@
   background: #000;
   min-height: 100vh;
   margin-top: -100vh;
+  --vetraScannerLift: 10rem;
   overflow: hidden;
 }
 
@@ -1831,6 +1832,7 @@
   display: flex;
   align-items: center;
   overflow: visible;
+  transform: translateY(calc(-1 * var(--vetraScannerLift)));
 }
 
 .vetraScannerSection__card-line {
@@ -1903,7 +1905,7 @@
   position: absolute;
   top: 50%;
   left: 0;
-  transform: translateY(-50%);
+  transform: translateY(calc(-50% - var(--vetraScannerLift)));
   width: 100vw;
   height: 250px;
   z-index: 0;
@@ -1914,7 +1916,7 @@
   position: absolute;
   top: 50%;
   left: -3px;
-  transform: translateY(-50%);
+  transform: translateY(calc(-50% - var(--vetraScannerLift)));
   width: 100vw;
   height: 300px;
   z-index: 15;
@@ -1927,7 +1929,7 @@
 
 .vetraScannerSection__credit {
   position: absolute;
-  bottom: 20px;
+  bottom: calc(20px + var(--vetraScannerLift));
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Roboto Mono', monospace;
@@ -1985,7 +1987,7 @@
   margin-left: auto;
 }
 
-/* Project 5 大标题：较 Codrops .type 约小两档 clamp(2rem,4.75vw,5rem) → ×0.77 */
+/* Project 5 大标题：较 Codrops .type 约小两档；再略缩小一档便于窄条与多行排版 */
 .demoTitleOnScroll .vetraTypeLineSmaller.type {
-  font-size: clamp(1.54rem, 3.65vw, 3.85rem);
+  font-size: clamp(1.32rem, 3.1vw, 3.25rem);
 }

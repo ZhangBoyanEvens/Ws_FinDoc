@@ -248,13 +248,9 @@ export function ImageExpansionTypographyPage() {
 
       <div className="content content--line">
         <h2 className="type vetraTypeLineSmaller" data-expand-5="">
-          Vetra
           <span className="type__expand type__expand--mini">
             <span className="type__expand-img type__expand-img--tiny">
-              <span
-                className="type__expand-img-inner vetraExpandTinyLabel vetraTypePlaywriteEmphasis"
-                aria-hidden="true"
-              >
+              <span className="type__expand-img-inner vetraExpandTinyLabel vetraTypePlaywriteEmphasis">
                 Vetra
               </span>
             </span>
@@ -264,7 +260,7 @@ export function ImageExpansionTypographyPage() {
           </span>
           company
           <br />
-          data into crystal-clear
+          data into crystal-
           <span className="type__expand type__expand--mini">
             <span className="type__expand-img type__expand-img--tiny">
               <span
@@ -277,7 +273,7 @@ export function ImageExpansionTypographyPage() {
           </span>
           intelligence,
           <br />
-          then hands you a sharp decision blade
+          then hands you a sharp decision
           <span className="type__expand type__expand--mini">
             <span className="type__expand-img type__expand-img--tiny">
               <span
@@ -290,7 +286,7 @@ export function ImageExpansionTypographyPage() {
           </span>
         
           <br />
-          — so you can slice
+          — so you can 
           <span className="type__expand type__expand--mini">
             <span className="type__expand-img type__expand-img--tiny">
               <span
