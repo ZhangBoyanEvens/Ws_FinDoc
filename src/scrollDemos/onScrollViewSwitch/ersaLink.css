@@ -1,0 +1,74 @@
+/* Codrops「Line Hover Styles」— .link--ersa，仅作用于 .demoTitleOnScroll 返回菜单 */
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link {
+  cursor: pointer;
+  font-size: 18px;
+  position: relative;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link:hover {
+  color: #fff;
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link::before,
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link::after {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  top: 100%;
+  left: 0;
+  pointer-events: none;
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link::before {
+  content: '';
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link.link--ersa {
+  padding: 0 10px;
+  font-family:
+    'halyard-display',
+    'Montserrat Alternates',
+    system-ui,
+    sans-serif;
+  letter-spacing: 1px;
+  text-indent: 1px;
+  text-transform: uppercase;
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link.link--ersa::before {
+  top: 50%;
+  height: 2px;
+  transform-origin: 100% 50%;
+  transform: scale3d(0, 1, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 1, 0.8, 1);
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link.link--ersa:hover::before {
+  transform-origin: 0% 50%;
+  transform: scale3d(1, 1, 1);
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link.link--ersa span {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.4, 1, 0.8, 1);
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link.link--ersa:hover span {
+  transform: scale3d(1.1, 1.1, 1.1);
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link:focus {
+  outline: none;
+}
+
+.demoTitleOnScroll a.demoTitleOnScroll__menuErsa.link:focus-visible {
+  outline: 2px solid #443ffc;
+  outline-offset: 3px;
+}

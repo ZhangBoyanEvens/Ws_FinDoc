@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="450" viewBox="0 0 720 450" role="img" aria-labelledby="t4">
+  <title id="t4">Checklist with completed items</title>
+  <rect x="140" y="48" width="440" height="354" rx="14" fill="#fff" stroke="#2f2e41" stroke-width="2"/>
+  <rect x="168" y="82" width="120" height="10" rx="3" fill="#e6e6e6"/>
+  <rect x="168" y="108" width="200" height="10" rx="3" fill="#e6e6e6"/>
+  <g fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="168" y="148" width="28" height="28" rx="6" fill="#6c63ff" stroke="#6c63ff"/>
+    <path d="M175 162l6 6 12-14" stroke="#fff" stroke-width="3"/>
+    <rect x="168" y="198" width="28" height="28" rx="6" fill="#6c63ff" stroke="#6c63ff"/>
+    <path d="M175 212l6 6 12-14" stroke="#fff" stroke-width="3"/>
+    <rect x="168" y="248" width="28" height="28" rx="6" fill="#6c63ff" stroke="#6c63ff"/>
+    <path d="M175 262l6 6 12-14" stroke="#fff" stroke-width="3"/>
+    <rect x="168" y="298" width="28" height="28" rx="6" fill="#e6e6e6" stroke="#9ca3af"/>
+    <rect x="168" y="348" width="28" height="28" rx="6" fill="#e6e6e6" stroke="#9ca3af"/>
+  </g>
+  <rect x="216" y="154" width="280" height="8" rx="2" fill="#374151" opacity="0.85"/>
+  <rect x="216" y="204" width="320" height="8" rx="2" fill="#374151" opacity="0.85"/>
+  <rect x="216" y="254" width="240" height="8" rx="2" fill="#374151" opacity="0.85"/>
+  <rect x="216" y="304" width="300" height="8" rx="2" fill="#d1d5db"/>
+  <rect x="216" y="354" width="260" height="8" rx="2" fill="#d1d5db"/>
+  <circle cx="600" cy="118" r="36" fill="#6c63ff" opacity="0.25"/>
+  <path d="M586 118l10 10 22-26" fill="none" stroke="#6c63ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

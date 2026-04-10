@@ -16,8 +16,13 @@ import 'splitting/dist/splitting-cells.css'
 import undrawNewsEditor from './assets/undraw_news-editor_5nnl.svg'
 import undrawWebSearch from './assets/undraw_web-search_7oif.svg'
 import undrawData from './assets/undraw_data_25jw.svg'
-import { FinDocOnScrollOverviewPage } from './onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
+import {
+  FinDocOnScrollOverviewPage,
+  GithubMarkIcon,
+} from './onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
+import { ImageExpansionTypographyPage } from './imageExpansionTypography/ImageExpansionTypographyPage.jsx'
 import './App.css'
+import './onScrollViewSwitch/ersaLink.css'
 
 /** 与 MorphSVG 示例同构：始终用一条二次贝塞尔 `Q`，顶缘为平滑弧线，不做多边形插值 */
 function demoCurtainPathD(ySide, yPeak) {
@@ -940,16 +945,34 @@ function MenuPage() {
 /** Demo 模式下各 title 独立 overview，暂时留白，仅保留返回菜单入口 */
 function DemoTitleOverviewPage({ title }) {
   return (
-    <div className="demoTitleOverview">
-      <header className="demoTitleOverview__bar">
-        <Link to={MENU_RESTORE_DEMO_TO} className="demoTitleOverview__back">
-          ← Menu
-        </Link>
-        <Link to={MENU_RESTORE_DEMO_TO} className="demoTitleOverview__overviewBtn">
-          Overview
-        </Link>
+    <div className="demoTitleOnScroll demoTitleOnScroll--overviewPlaceholder">
+      <div className="demoTitleOnScroll__parallaxGuides" aria-hidden="true" />
+      <header className="demoTitleOverview__bar demoTitleOnScroll__bar">
+        <div className="demoTitleOnScroll__barStart">
+          <Link
+            to={MENU_RESTORE_DEMO_TO}
+            className="link link--ersa demoTitleOnScroll__menuErsa"
+          >
+            <span>← Menu</span>
+          </Link>
+          <div className="demoTitleOnScroll__heroTrack">
+            <h1 className="frame__title-main onScrollViewSwitchMount__heroTitle">
+              <span
+                className="demoTitleOnScroll__heroGithubStatic"
+                aria-hidden="true"
+              >
+                <GithubMarkIcon />
+              </span>
+            </h1>
+          </div>
+        </div>
       </header>
-      <main className="demoTitleOverview__main" aria-label={`${title} overview (placeholder)`} />
+      <div className="demoTitleOnScroll__stage">
+        <main
+          className="demoTitleOverview__main"
+          aria-label={`${title} overview (placeholder)`}
+        />
+      </div>
     </div>
   )
 }
@@ -981,12 +1004,15 @@ export default function App() {
             element={
               item.id === 'findoc' ? (
                 <FinDocOnScrollOverviewPage />
+              ) : item.id === 'vetra' ? (
+                <ImageExpansionTypographyPage />
               ) : (
                 <DemoTitleOverviewPage title={item.title} />
               )
             }
           />
         ))}
+        <Route path="/ImageExpansionTypography" element={<ImageExpansionTypographyPage />} />
       </Routes>
     </BrowserRouter>
   )

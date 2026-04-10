@@ -1,3 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap');
+/* Shiny CTA — CSS @property and the New Style (https://ryanmulligan.dev/blog/css-property-new-style/) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500&display=swap');
+
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-angle-offset {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-percent {
+  syntax: '<percentage>';
+  initial-value: 5%;
+  inherits: false;
+}
+
+@property --gradient-shine {
+  syntax: '<color>';
+  initial-value: white;
+  inherits: false;
+}
+
+:root {
+  --shiny-cta-bg: #000000;
+  --shiny-cta-bg-subtle: #1a1818;
+  --shiny-cta-fg: #ffffff;
+  --shiny-cta-highlight: blue;
+  --shiny-cta-highlight-subtle: #8484ff;
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -885,6 +922,17 @@
   font-family: 'Playwrite IE', 'Playwrite Ireland', 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
+/* 恢复主页字体，避免被 ImageExpansionTypography 的全局 body 字体污染 */
+.menuShell {
+  font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  text-transform: none;
+}
+
+.menuShell .menu__item-title {
+  font-family: 'Playwrite IE', 'Playwrite Ireland', 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  text-transform: none;
+}
+
 /* 末态只靠父级 --color-menu（白/黑）；hover 配色仅由 GSAP 短时覆盖 */
 .menuShell .menu__item-title .char {
   color: inherit;
@@ -1282,6 +1330,17 @@
   outline-offset: 3px;
 }
 
+/* 占位 overview：与同槽位 GitHub 链格式一致，暂不挂 href */
+.demoTitleOnScroll__heroTrack .demoTitleOnScroll__heroGithubStatic {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  cursor: default;
+  pointer-events: none;
+}
+
 .demoTitleOnScroll__heroTrack .onScrollViewSwitchMount__heroGithubSvg {
   display: block;
   flex-shrink: 0;
@@ -1294,6 +1353,10 @@
   min-height: 0;
   /* 固定顶栏占位，避免首屏与「← Menu」重叠 */
   padding-top: 3.5rem;
+}
+
+.demoTitleOnScroll--overviewPlaceholder {
+  color: rgba(229, 231, 235, 0.88);
 }
 
 /* Demo 专用 overview 占位页 */
@@ -1340,4 +1403,589 @@
 
 .demoTitleOverview__main {
   min-height: 100svh;
+}
+
+/* Vetra 整页：与 Start（shiny-cta）同一套黑底 + 蓝紫强调 */
+.demoTitleOnScroll--vetra {
+  background: var(--shiny-cta-bg);
+}
+
+/* Vetra：parallax 网格加亮 */
+.demoTitleOnScroll--vetra .demoTitleOnScroll__parallaxGuides {
+  opacity: 0.3;
+  background-image:
+    linear-gradient(to right, rgba(255, 200, 160, 0.28) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 200, 160, 0.28) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+}
+
+.demoTitleOnScroll--vetra .demoTitleOnScroll__heroTrack .onScrollViewSwitchMount__heroTitle {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.demoTitleOnScroll--vetra .demoTitleOnScroll__heroTrack .demoTitleOnScroll__heroGithubLink:hover {
+  color: var(--shiny-cta-highlight-subtle);
+}
+
+.demoTitleOnScroll--vetra .demoTitleOnScroll__heroTrack .demoTitleOnScroll__heroGithubLink:focus-visible {
+  outline-color: var(--shiny-cta-highlight-subtle);
+}
+
+/* 展开区块：白底在下、SVG/图在上（同色先铺底再绘制 background-image） */
+.demoTitleOnScroll--vetra .type__expand-img-inner {
+  background-color: #fff;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.demoTitleOnScroll--vetra .type__expand--stack {
+  vertical-align: middle;
+}
+
+.demoTitleOnScroll--vetra .type__expand-img-inner.vetraExpandImgInner--noWhite {
+  background-color: transparent;
+}
+
+/* Tiny 槽：供容器查询，使文字字号按槽高度贴合 */
+.demoTitleOnScroll--vetra .type__expand-img.type__expand-img--tiny {
+  container-type: size;
+}
+
+/* Project 5 窄条 mini 槽：用文字「Vetra」替代位图；与 Playwrite 强调叠用时由下一条覆盖 */
+.demoTitleOnScroll--vetra .type__expand-img--tiny .vetraExpandTinyLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: none;
+  background-color: rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+  padding: 0 0.06em;
+  overflow: hidden;
+  font-family: 'Bitcount Grid Double', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.38rem, 1.05vw, 0.62rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-transform: none;
+  color: rgba(232, 236, 255, 0.95);
+}
+
+/* 与 .vetraTypePlaywriteEmphasis 同款渐变与光晕；字号按槽高（约满高） */
+.demoTitleOnScroll--vetra .type__expand-img--tiny .vetraExpandTinyLabel.vetraTypePlaywriteEmphasis {
+  font-family: 'Playwrite IE', 'Playwrite Ireland', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-variation-settings: 'wght' 380;
+  letter-spacing: 0.01em;
+  font-size: clamp(0.38rem, 1.05vw, 0.62rem);
+  font-size: clamp(0.35rem, calc(100cqh * 0.92), 4rem);
+  line-height: 1;
+  color: transparent;
+  background: linear-gradient(100deg, #bae6fd 0%, #38bdf8 38%, #2563eb 72%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.5)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.3));
+}
+
+/* Vetra hero 区块尺寸（Codrops 栅格） */
+.demoTitleOnScroll .content--hero .content--hero__meta,
+.demoTitleOnScroll .content--hero .content--hero__block {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.demoTitleOnScroll .content--hero .content--hero__meta {
+  min-height: 0;
+  display: none;
+}
+
+.demoTitleOnScroll .content--hero .content--hero__type {
+  min-height: 100vh;
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.demoTitleOnScroll--vetra .content--hero .content--hero__type {
+  overflow: visible;
+}
+
+.demoTitleOnScroll .content--hero .content--hero__block {
+  min-height: 0;
+  max-width: none;
+  display: none;
+}
+
+@media screen and (min-width: 53em) {
+  .demoTitleOnScroll .content--hero.content--left {
+    grid-template-rows: 0 100vh 0;
+    margin-bottom: 0;
+  }
+
+  .demoTitleOnScroll .content--hero .content--hero__type {
+    min-height: 100vh;
+  }
+}
+
+.demoTitleOnScroll .vetraHeroSignalCanvas {
+  position: absolute;
+  inset: 0;
+  background: var(--shiny-cta-bg);
+}
+
+.demoTitleOnScroll .vetraHeroSignalCanvas canvas {
+  display: block;
+}
+
+/* Vetra 页：差分混合跟随光标（canvas） */
+.demoTitleOnScroll.vetraDiffCursor--active {
+  cursor: none;
+}
+
+.demoTitleOnScroll .vetraDiffCursor {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  z-index: 6000;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.demoTitleOnScroll .vetraHeroTitleCluster {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+  transform: translateY(10rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.demoTitleOnScroll .vetraHeroSignalCanvas__title {
+  display: block;
+  text-align: center;
+  transform: translateX(clamp(0px, 12vw, 15rem));
+  font-family: 'Bitcount Grid Double';
+  font-size: clamp(5rem, 20vw, 18rem);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  background: linear-gradient(
+    180deg,
+    var(--shiny-cta-highlight-subtle) 0%,
+    var(--shiny-cta-highlight) 42%,
+    #2a2a9e 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 0 18px rgba(132, 132, 255, 0.5),
+    0 0 36px rgba(0, 0, 255, 0.28);
+}
+
+.demoTitleOnScroll .vetraHeroSignalCanvas__subtitle {
+  margin: 0;
+  align-self: flex-end;
+  width: 100%;
+  max-width: min(100%, 42rem);
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-left: 0.25em;
+  padding-block: 0.08em;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2em;
+  text-align: right;
+  font-family: 'Bitcount Grid Double';
+  font-size: clamp(1.15rem, 3.2vw, 2.5rem);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  line-height: 1.22;
+  overflow: visible;
+  background: linear-gradient(180deg, #e8ecff 0%, #b8d4ff 40%, #9ec0ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 0 22px rgba(160, 200, 255, 0.55),
+    0 0 40px rgba(132, 180, 255, 0.28);
+}
+
+.demoTitleOnScroll .vetraHeroSignalCanvas__subtitle span {
+  display: block;
+}
+
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta {
+  position: absolute;
+  right: 2rem;
+  bottom: 7rem;
+  z-index: 3;
+  width: auto;
+  height: auto;
+  --animation: gradient-angle linear infinite;
+  --duration: 3s;
+  --shadow-size: 2px;
+  --transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+  isolation: isolate;
+  overflow: hidden;
+  cursor: pointer;
+  outline-offset: 4px;
+  padding: 1.25rem 2.5rem;
+  font-family: inherit;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  border: 1px solid transparent;
+  border-radius: 360px;
+  color: var(--shiny-cta-fg);
+  background:
+    linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg)) padding-box,
+    conic-gradient(
+        from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+        transparent,
+        var(--shiny-cta-highlight) var(--gradient-percent),
+        var(--gradient-shine) calc(var(--gradient-percent) * 2),
+        var(--shiny-cta-highlight) calc(var(--gradient-percent) * 3),
+        transparent calc(var(--gradient-percent) * 4)
+      )
+      border-box;
+  box-shadow: inset 0 0 0 1px var(--shiny-cta-bg-subtle);
+
+  &::before,
+  &::after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+  }
+
+  &:active {
+    translate: 0 1px;
+  }
+
+  transition: var(--transition);
+  transition-property: --gradient-angle-offset, --gradient-percent, --gradient-shine;
+}
+
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta::before {
+  --size: calc(100% - var(--shadow-size) * 3);
+  --position: 2px;
+  --space: calc(var(--position) * 2);
+  width: var(--size);
+  height: var(--size);
+  background: radial-gradient(
+      circle at var(--position) var(--position),
+      white calc(var(--position) / 4),
+      transparent 0
+    )
+    padding-box;
+  background-size: var(--space) var(--space);
+  background-repeat: space;
+  mask-image: conic-gradient(
+    from calc(var(--gradient-angle) + 45deg),
+    black,
+    transparent 10% 90%,
+    black
+  );
+  border-radius: inherit;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta::after {
+  --animation: shimmer linear infinite;
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    -50deg,
+    transparent,
+    var(--shiny-cta-highlight),
+    transparent
+  );
+  mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+  opacity: 0.6;
+}
+
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta span {
+  z-index: 1;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta,
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta::before,
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta::after {
+  animation: var(--animation) var(--duration), var(--animation) calc(var(--duration) / 0.4) reverse paused;
+  animation-composition: add;
+}
+
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta:is(:hover, :focus-visible) {
+  --gradient-percent: 20%;
+  --gradient-angle-offset: 95deg;
+  --gradient-shine: var(--shiny-cta-highlight-subtle);
+}
+
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta:is(:hover, :focus-visible),
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta:is(:hover, :focus-visible)::before,
+.demoTitleOnScroll .vetraHeroStartBtn.shiny-cta:is(:hover, :focus-visible)::after {
+  animation-play-state: running;
+}
+
+@keyframes gradient-angle {
+  to {
+    --gradient-angle: 360deg;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Vetra 底部扫描区（由旧版 body + script React 化） */
+.vetraScannerSection {
+  position: relative;
+  background: #000;
+  min-height: 100vh;
+  margin-top: -100vh;
+  overflow: hidden;
+}
+
+.vetraScannerSection__controls {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  gap: 0;
+  z-index: 100;
+}
+
+.vetraScannerSection__btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.14);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.vetraScannerSection__btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+  transform: translateY(-2px);
+}
+
+.vetraScannerSection__name {
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  z-index: 100;
+}
+
+.vetraScannerSection__container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vetraScannerSection__card-stream {
+  position: absolute;
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+
+.vetraScannerSection__card-line {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.vetraScannerSection__card-line--auto {
+  animation: vetraCardsMarquee 40s linear infinite;
+}
+
+@keyframes vetraCardsMarquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.vetraScanner__card-wrapper {
+  position: relative;
+  width: 400px;
+  height: 250px;
+  flex-shrink: 0;
+}
+
+.vetraScanner__card {
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.vetraScanner__card-normal {
+  z-index: 2;
+  clip-path: inset(0 0 0 var(--clip-right, 0%));
+}
+
+.vetraScanner__card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vetraScanner__card-ascii {
+  z-index: 1;
+  clip-path: inset(0 calc(100% - var(--clip-left, 0%)) 0 0);
+}
+
+.vetraScanner__ascii-content {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  color: rgba(220, 210, 255, 0.6);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 13px;
+  overflow: hidden;
+  white-space: pre;
+}
+
+#particleCanvas {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100vw;
+  height: 250px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#scannerCanvas {
+  position: absolute;
+  top: 50%;
+  left: -3px;
+  transform: translateY(-50%);
+  width: 100vw;
+  height: 300px;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.vetraScannerSection__scanner {
+  display: none;
+}
+
+.vetraScannerSection__credit {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 900;
+  color: #ff9a9c;
+  z-index: 1000;
+}
+
+.vetraScannerSection__credit a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 与菜单主标题同款 Playwrite；配色强调（Vetra 蓝） */
+.demoTitleOnScroll .vetraTypePlaywriteEmphasis {
+  font-family: 'Playwrite IE', 'Playwrite Ireland', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-variation-settings: 'wght' 380;
+  text-transform: none;
+  font-size: clamp(1.35rem, 4.5vw, 3.35rem);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  vertical-align: baseline;
+  background: linear-gradient(100deg, #bae6fd 0%, #38bdf8 38%, #2563eb 72%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(37, 99, 235, 0.45)) drop-shadow(0 0 28px rgba(56, 189, 248, 0.25));
+}
+
+.demoTitleOnScroll .block--vetraLead {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.95;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  text-wrap: balance;
+  max-width: min(100%, 36rem);
+  margin-inline: auto;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.demoTitleOnScroll .block--vetraCommand {
+  font-size: clamp(1.2rem, 2.35vw, 1.75rem);
+  line-height: 1.85;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  max-width: min(100%, 42rem);
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.demoTitleOnScroll .block--vetraCommand.aright {
+  margin-left: auto;
+}
+
+/* Project 5 大标题：较 Codrops .type 约小两档 clamp(2rem,4.75vw,5rem) → ×0.77 */
+.demoTitleOnScroll .vetraTypeLineSmaller.type {
+  font-size: clamp(1.54rem, 3.65vw, 3.85rem);
 }
