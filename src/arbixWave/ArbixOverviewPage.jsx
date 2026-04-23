@@ -3,13 +3,12 @@ import { Link } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
+import { GithubMarkIcon } from '../onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import { DualWaveAnimation } from './DualWaveAnimation'
 import { preloadImages } from './utils'
-import { GithubMarkIcon } from '../onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import './arbixWave.css'
 
 const MENU_RESTORE_DEMO_TO = '/menu?demo=1'
-
 const BRANDS = [
   ['Tesla', 'tesla.webp'],
   ['Chanel', 'chanel.webp'],
@@ -38,8 +37,17 @@ const BRANDS = [
 ]
 
 export function ArbixOverviewPage() {
-  const wrapperRef = useRef(null)
+  const rootRef = useRef(null)
+  const dualWaveWrapperRef = useRef(null)
   const searchShellRef = useRef(null)
+  const navDragRef = useRef({
+    active: false,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    offsetX: 0,
+    offsetY: 0,
+  })
   const list = useMemo(() => [...BRANDS, ...BRANDS], [])
   const [navEntered, setNavEntered] = useState(false)
 
@@ -50,18 +58,20 @@ export function ArbixOverviewPage() {
     htmlEl.classList.add('arbixWaveScroll')
     bodyEl.classList.add('arbixWaveScroll')
 
-    const wrapper = wrapperRef.current
-    if (!wrapper) {
+    const root = rootRef.current
+    if (!root) {
       return () => {
+        document.body.classList.remove('loading')
         htmlEl.classList.remove('arbixWaveScroll')
         bodyEl.classList.remove('arbixWaveScroll')
       }
     }
-    let animation = null
+
     let smoother = null
+    const parallaxTimelines = []
+    let waveAnimation = null
     let cancelled = false
 
-    // 恢复原始 Codrops 惯性滚动手感：滚轮停止后继续滑动并渐停。
     if (typeof ScrollSmoother?.create === 'function') {
       smoother = ScrollSmoother.create({
         smooth: 1.5,
@@ -69,16 +79,47 @@ export function ArbixOverviewPage() {
       })
     }
 
-    preloadImages('.arbixWavePage .dual-wave-wrapper img').finally(() => {
-      if (cancelled) return
-      animation = new DualWaveAnimation(wrapper)
-      animation.init()
-      document.body.classList.remove('loading')
+    root.querySelectorAll('[data-parallax-layers]').forEach((triggerElement) => {
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: triggerElement,
+          start: '0% 0%',
+          end: '100% 0%',
+          scrub: 0,
+        },
+      })
+      const layers = [
+        { layer: '1', yPercent: 70 },
+        { layer: '2', yPercent: 55 },
+        { layer: '3', yPercent: 40 },
+        { layer: '4', yPercent: 10 },
+      ]
+      layers.forEach((layerObj, idx) => {
+        timeline.to(
+          triggerElement.querySelectorAll(`[data-parallax-layer="${layerObj.layer}"]`),
+          { yPercent: layerObj.yPercent, ease: 'none' },
+          idx === 0 ? undefined : '<',
+        )
+      })
+      parallaxTimelines.push(timeline)
     })
+
+    const dualWaveWrapper = dualWaveWrapperRef.current
+    if (dualWaveWrapper) {
+      preloadImages('.arbixWavePage .dual-wave-wrapper img').finally(() => {
+        if (cancelled) return
+        waveAnimation = new DualWaveAnimation(dualWaveWrapper)
+        waveAnimation.init()
+        document.body.classList.remove('loading')
+      })
+    } else {
+      document.body.classList.remove('loading')
+    }
 
     return () => {
       cancelled = true
-      animation?.destroy()
+      parallaxTimelines.forEach((tl) => tl.kill())
+      waveAnimation?.destroy()
       smoother?.kill()
       htmlEl.classList.remove('arbixWaveScroll')
       bodyEl.classList.remove('arbixWaveScroll')
@@ -92,8 +133,61 @@ export function ArbixOverviewPage() {
     return () => cancelAnimationFrame(raf)
   }, [])
 
+  useEffect(() => {
+    const shell = searchShellRef.current
+    if (!shell) return undefined
+
+    const drag = navDragRef.current
+
+    const handlePointerDown = (event) => {
+      if (event.button !== 0 || !event.isPrimary) return
+      const interactiveTarget = event.target instanceof Element
+        ? event.target.closest('a, button')
+        : null
+      if (interactiveTarget) return
+      drag.active = true
+      drag.pointerId = event.pointerId
+      drag.startX = event.clientX - drag.offsetX
+      drag.startY = event.clientY - drag.offsetY
+      shell.classList.add('arbixWaveSearchShell--dragging')
+      shell.setPointerCapture(event.pointerId)
+      event.preventDefault()
+    }
+
+    const handlePointerMove = (event) => {
+      if (!drag.active || event.pointerId !== drag.pointerId) return
+      drag.offsetX = event.clientX - drag.startX
+      drag.offsetY = event.clientY - drag.startY
+      shell.style.setProperty('--drag-x', `${drag.offsetX}px`)
+      shell.style.setProperty('--drag-y', `${drag.offsetY}px`)
+    }
+
+    const stopDragging = (event) => {
+      if (!drag.active || event.pointerId !== drag.pointerId) return
+      drag.active = false
+      drag.pointerId = null
+      shell.classList.remove('arbixWaveSearchShell--dragging')
+      if (shell.hasPointerCapture(event.pointerId)) {
+        shell.releasePointerCapture(event.pointerId)
+      }
+    }
+
+    shell.addEventListener('pointerdown', handlePointerDown)
+    shell.addEventListener('pointermove', handlePointerMove)
+    shell.addEventListener('pointerup', stopDragging)
+    shell.addEventListener('pointercancel', stopDragging)
+
+    return () => {
+      shell.removeEventListener('pointerdown', handlePointerDown)
+      shell.removeEventListener('pointermove', handlePointerMove)
+      shell.removeEventListener('pointerup', stopDragging)
+      shell.removeEventListener('pointercancel', stopDragging)
+      shell.classList.remove('arbixWaveSearchShell--dragging')
+    }
+  }, [])
+
   return (
-    <div className="arbixWavePage">
+    <div ref={rootRef} className="arbixWavePage">
       <header className="arbixWaveNav" aria-label="search navigation">
         <div
           ref={searchShellRef}
@@ -139,9 +233,61 @@ export function ArbixOverviewPage() {
       </header>
       <main id="smooth-wrapper" className="container">
         <div id="smooth-content">
+          <div className="parallax">
+            <section className="parallax__header">
+              <div className="parallax__visuals">
+                <div className="parallax__black-line-overflow" />
+                <div data-parallax-layers className="parallax__layers">
+                  <img
+                    src="https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717795be09b462b2e8ebf71_osmo-parallax-layer-3.webp"
+                    loading="eager"
+                    data-parallax-layer="1"
+                    alt=""
+                    className="parallax__layer-img"
+                  />
+                  <img
+                    src="https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717795b4d5ac529e7d3a562_osmo-parallax-layer-2.webp"
+                    loading="eager"
+                    data-parallax-layer="2"
+                    alt=""
+                    className="parallax__layer-img"
+                  />
+                  <div data-parallax-layer="3" className="parallax__layer-title">
+                    <h2 className="parallax__title">Parallax</h2>
+                  </div>
+                  <img
+                    src="https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717795bb5aceca85011ad83_osmo-parallax-layer-1.webp"
+                    loading="eager"
+                    data-parallax-layer="4"
+                    alt=""
+                    className="parallax__layer-img"
+                  />
+                </div>
+                <div className="parallax__fade" />
+              </div>
+            </section>
+            <section className="parallax__content">
+              <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 160 160" fill="none" className="osmo-icon-svg">
+                <path d="M94.8284 53.8578C92.3086 56.3776 88 54.593 88 51.0294V0H72V59.9999C72 66.6273 66.6274 71.9999 60 71.9999H0V87.9999H51.0294C54.5931 87.9999 56.3777 92.3085 53.8579 94.8283L18.3431 130.343L29.6569 141.657L65.1717 106.142C67.684 103.63 71.9745 105.396 72 108.939V160L88.0001 160L88 99.9999C88 93.3725 93.3726 87.9999 100 87.9999H160V71.9999H108.939C105.407 71.9745 103.64 67.7091 106.12 65.1938L106.142 65.1716L141.657 29.6568L130.343 18.3432L94.8284 53.8578Z" fill="currentColor" />
+              </svg>
+            </section>
+          </div>
+          <div className="osmo-credits">
+            <p className="osmo-credits__p">
+              Resource by{' '}
+              <a
+                target="_blank"
+                href="https://www.osmo.supply?utm_source=codepen&utm_medium=pen&utm_campaign=parallax-image-layers"
+                className="osmo-credits__p-a"
+                rel="noreferrer"
+              >
+                Osmo
+              </a>
+            </p>
+          </div>
           <div className="spacer" />
           <div
-            ref={wrapperRef}
+            ref={dualWaveWrapperRef}
             className="dual-wave-wrapper"
             data-animation="dual-wave"
             data-wave-number="12"
@@ -171,4 +317,3 @@ export function ArbixOverviewPage() {
     </div>
   )
 }
-

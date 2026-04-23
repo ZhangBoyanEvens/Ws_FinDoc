@@ -10,7 +10,6 @@ import { ExpandImageEffect as ExpandImageEffect3 } from './vendor/js/effect-3/ex
 import { ExpandImageEffect as ExpandImageEffect4 } from './vendor/js/effect-4/expandImageEffect.js'
 import { ExpandImageEffect as ExpandImageEffect5 } from './vendor/js/effect-5/expandImageEffect.js'
 import vetraPartnersGridImg from './vendor/img/vetra-partners-grid.png'
-import secretsFoundImg from './vendor/img/secrets-found.svg'
 import llmImg from './vendor/img/llm.svg'
 import precisionImg from './vendor/img/precision.svg'
 import { GithubMarkIcon } from '../onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
@@ -191,11 +190,11 @@ export function ImageExpansionTypographyPage() {
             <span className="type__expand-img">
               <img
                 className="type__expand-img-inner vetraExpandImgInner--noWhite"
-                src={secretsFoundImg}
-                alt=""
-                loading="eager"
-              />
-            </span>
+                src="/vetra-secrets-custom.png"
+                      alt=""
+                      loading="eager"
+                    />
+                  </span>
           </span>
           Behind
           <br />
