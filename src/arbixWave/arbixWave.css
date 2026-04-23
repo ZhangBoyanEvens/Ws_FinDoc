@@ -1,0 +1,139 @@
+.arbixWavePage {
+  --color-text: rgba(255, 255, 255, 0.7);
+  --color-bg: #000;
+  --color-link: rgba(255, 255, 255, 0.75);
+  --color-link-hover: #fff;
+  --page-padding: 1.5rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+html.arbixWaveScroll,
+body.arbixWaveScroll {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: auto;
+}
+
+.arbixWavePage .container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0 var(--page-padding);
+}
+
+.arbixWavePage .spacer {
+  height: 75svh;
+}
+
+.arbixWavePage .spacer-bottom {
+  height: 100svh;
+}
+
+.arbixWavePage .frame {
+  text-transform: uppercase;
+  padding: var(--page-padding);
+  display: grid;
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 10;
+  grid-template-columns: auto auto 1fr;
+  gap: 0.75rem 1rem;
+  pointer-events: none;
+  font-family: 'forma-djr-mono', monospace;
+}
+
+.arbixWavePage .frame a,
+.arbixWavePage .frame button,
+.arbixWavePage .frame .frame__title {
+  pointer-events: auto;
+}
+
+.arbixWavePage .frame__title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.arbixWavePage .frame a {
+  color: var(--color-link);
+  text-decoration: none;
+  font-size: 0.82rem;
+}
+
+.arbixWavePage .frame a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+.arbixWavePage .dual-wave-wrapper {
+  display: flex;
+  width: 100%;
+  position: relative;
+  gap: 25vw;
+}
+
+.arbixWavePage .wave-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-size: clamp(2rem, 10vw, 3rem);
+  font-weight: 400;
+  line-height: 0.72;
+  position: relative;
+  z-index: 3;
+  text-transform: uppercase;
+}
+
+.arbixWavePage .wave-column-left {
+  align-items: flex-start;
+}
+
+.arbixWavePage .wave-column-right {
+  align-items: flex-end;
+}
+
+.arbixWavePage .animated-text {
+  width: max-content;
+  color: #4d4d4d;
+  transition: color 300ms ease-out;
+}
+
+.arbixWavePage .animated-text.focused {
+  color: #fff;
+}
+
+.arbixWavePage .image-thumbnail-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 15vw;
+  z-index: 2;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.arbixWavePage .image-thumbnail {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 30vh;
+}
+
+@media (max-width: 1023px) {
+  .arbixWavePage .dual-wave-wrapper {
+    gap: 10vw;
+  }
+  .arbixWavePage .wave-column {
+    gap: 2.2rem;
+    font-size: 5vw;
+  }
+  .arbixWavePage .image-thumbnail-wrapper {
+    width: 48vw;
+  }
+}
+

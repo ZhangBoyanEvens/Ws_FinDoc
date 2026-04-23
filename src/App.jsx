@@ -21,6 +21,7 @@ import {
   GithubMarkIcon,
 } from './onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import { ImageExpansionTypographyPage } from './imageExpansionTypography/ImageExpansionTypographyPage.jsx'
+import { ArbixOverviewPage } from './arbixWave/ArbixOverviewPage.jsx'
 import { FinDocDashboard } from './findoc/FinDocDashboard.jsx'
 import './App.css'
 import './onScrollViewSwitch/ersaLink.css'
@@ -96,7 +97,6 @@ const MENU_ITEMS = [
 const MENU_DEMO_QUERY = 'demo'
 const MENU_DEMO_QUERY_VALUE = '1'
 const MENU_RESTORE_DEMO_TO = `/menu?${MENU_DEMO_QUERY}=${MENU_DEMO_QUERY_VALUE}`
-const ARBIX_CODROPS_FOLDER_ENTRY = '/codrops-tutorial-text-animation-main/index.html'
 
 function readDemoParamFromWindow() {
   if (typeof window === 'undefined') return false
@@ -981,14 +981,6 @@ function DemoTitleOverviewPage({ title }) {
   )
 }
 
-function FolderEntryRedirect({ to }) {
-  useEffect(() => {
-    window.location.assign(to)
-  }, [to])
-
-  return null
-}
-
 function getMenuItemTarget(item, demoMode) {
   if (item.id === 'arbix') return item.overviewPath
   return demoMode ? item.overviewPath : item.basePath
@@ -997,7 +989,7 @@ function getMenuItemTarget(item, demoMode) {
 function renderOverviewElement(item) {
   if (item.id === 'findoc') return <FinDocOnScrollOverviewPage />
   if (item.id === 'vetra') return <ImageExpansionTypographyPage />
-  if (item.id === 'arbix') return <FolderEntryRedirect to={ARBIX_CODROPS_FOLDER_ENTRY} />
+  if (item.id === 'arbix') return <ArbixOverviewPage />
   return <DemoTitleOverviewPage title={item.title} />
 }
 

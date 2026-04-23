@@ -5,14 +5,18 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger.js'
 import { Flip } from 'gsap/flip'
 import imagesLoaded from 'imagesloaded'
 import Lenis from '@studio-freight/lenis'
-import { ExpandImageEffect as ExpandImageEffect2 } from '../../ImageExpansionTypography-main/js/effect-2/expandImageEffect.js'
-import { ExpandImageEffect as ExpandImageEffect3 } from '../../ImageExpansionTypography-main/js/effect-3/expandImageEffect.js'
-import { ExpandImageEffect as ExpandImageEffect4 } from '../../ImageExpansionTypography-main/js/effect-4/expandImageEffect.js'
-import { ExpandImageEffect as ExpandImageEffect5 } from '../../ImageExpansionTypography-main/js/effect-5/expandImageEffect.js'
+import { ExpandImageEffect as ExpandImageEffect2 } from './vendor/js/effect-2/expandImageEffect.js'
+import { ExpandImageEffect as ExpandImageEffect3 } from './vendor/js/effect-3/expandImageEffect.js'
+import { ExpandImageEffect as ExpandImageEffect4 } from './vendor/js/effect-4/expandImageEffect.js'
+import { ExpandImageEffect as ExpandImageEffect5 } from './vendor/js/effect-5/expandImageEffect.js'
+import vetraPartnersGridImg from './vendor/img/vetra-partners-grid.png'
+import secretsFoundImg from './vendor/img/secrets-found.svg'
+import llmImg from './vendor/img/llm.svg'
+import precisionImg from './vendor/img/precision.svg'
 import { GithubMarkIcon } from '../onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import { VetraHeroSignalCanvas } from './VetraHeroSignalCanvas.jsx'
 import { VetraScannerSection } from './VetraScannerSection.jsx'
-import '../../ImageExpansionTypography-main/css/base.css'
+import './vendor/css/base.css'
 
 const MENU_RESTORE_DEMO_TO = '/menu?demo=1'
 
@@ -161,7 +165,7 @@ export function ImageExpansionTypographyPage() {
               <span
                 className="type__expand-img-inner"
                 style={{
-                  backgroundImage: 'url(/ImageExpansionTypography-main/img/vetra-partners-grid.png)',
+                  backgroundImage: `url(${vetraPartnersGridImg})`,
                 }}
               />
             </span>
@@ -185,11 +189,11 @@ export function ImageExpansionTypographyPage() {
           <br />
           <span className="type__expand type__expand--full">
             <span className="type__expand-img">
-              <span
+              <img
                 className="type__expand-img-inner vetraExpandImgInner--noWhite"
-                style={{
-                  backgroundImage: 'url(/ImageExpansionTypography-main/img/secrets-found.svg)',
-                }}
+                src={secretsFoundImg}
+                alt=""
+                loading="eager"
               />
             </span>
           </span>
@@ -213,7 +217,7 @@ export function ImageExpansionTypographyPage() {
               <span
                 className="type__expand-img-inner"
                 style={{
-                  backgroundImage: 'url(/ImageExpansionTypography-main/img/llm.svg)',
+                  backgroundImage: `url(${llmImg})`,
                 }}
               />
             </span>
@@ -230,7 +234,7 @@ export function ImageExpansionTypographyPage() {
               <span
                 className="type__expand-img-inner"
                 style={{
-                  backgroundImage: 'url(/ImageExpansionTypography-main/img/precision.svg)',
+                  backgroundImage: `url(${precisionImg})`,
                 }}
               />
             </span>
