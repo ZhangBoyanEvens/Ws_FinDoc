@@ -13,8 +13,8 @@ export function VetraHeroSignalCanvas() {
 
     const params = {
       colorBg: '#000000',
-      colorLine: '#3d3d5c',
-      colorSignal: '#a8a8ff',
+      colorLine: '#4b4b72',
+      colorSignal: '#bfc5ff',
       lineCount: 42,
       positionY: 0,
       spreadHeight: 30.33,
@@ -24,12 +24,12 @@ export function VetraHeroSignalCanvas() {
       curvePower: 0.8265,
       waveSpeed: 2.48,
       waveHeight: 0.145,
-      lineOpacity: 0.78,
+      lineOpacity: 0.84,
       signalCount: 44,
       speedGlobal: 0.36,
       trailLength: 5,
-      bloomStrength: 1.65,
-      bloomRadius: 0.28,
+      bloomStrength: 1.35,
+      bloomRadius: 0.2,
     }
     params.positionX = (params.curveLength - params.straightLength) / 2
 

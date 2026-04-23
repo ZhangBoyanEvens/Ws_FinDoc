@@ -21,6 +21,7 @@ import {
   GithubMarkIcon,
 } from './onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import { ImageExpansionTypographyPage } from './imageExpansionTypography/ImageExpansionTypographyPage.jsx'
+import { FinDocDashboard } from './findoc/FinDocDashboard.jsx'
 import './App.css'
 import './onScrollViewSwitch/ersaLink.css'
 
@@ -95,6 +96,7 @@ const MENU_ITEMS = [
 const MENU_DEMO_QUERY = 'demo'
 const MENU_DEMO_QUERY_VALUE = '1'
 const MENU_RESTORE_DEMO_TO = `/menu?${MENU_DEMO_QUERY}=${MENU_DEMO_QUERY_VALUE}`
+const ARBIX_CODROPS_FOLDER_ENTRY = '/codrops-tutorial-text-animation-main/index.html'
 
 function readDemoParamFromWindow() {
   if (typeof window === 'undefined') return false
@@ -155,6 +157,7 @@ function playDemoCurtainOut(pathEl, onComplete) {
 }
 
 function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
+  const isFinDocShell = themeClass === 'theme-findoc'
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -300,8 +303,9 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
         </div>
       </header>
 
-      {/* 按你要求：main 区域不添加任何内容 */}
-      <main className="finMain" />
+      <main className={`finMain ${isFinDocShell ? 'finMain--dashboard' : ''}`}>
+        {isFinDocShell ? <FinDocDashboard /> : null}
+      </main>
     </div>
   )
 }
@@ -841,27 +845,27 @@ function MenuPage() {
           aria-hidden={curtainVisible && !demoMode}
           onMouseLeave={() => setLandscapeSlideIndex(1)}
         >
-            {MENU_ITEMS.map((item, idx) => (
-              <Link
-                key={item.id}
-                to={demoMode ? item.overviewPath : item.basePath}
-                className="menu__item"
-                data-title={item.title}
-                data-subtitle={item.subtitle}
-                onMouseEnter={() => setLandscapeSlideIndex(idx)}
+          {MENU_ITEMS.map((item, idx) => (
+            <Link
+              key={item.id}
+              to={getMenuItemTarget(item, demoMode)}
+              className="menu__item"
+              data-title={item.title}
+              data-subtitle={item.subtitle}
+              onMouseEnter={() => setLandscapeSlideIndex(idx)}
+            >
+              <span
+                ref={item.id === 'vetra' ? vetraTitleRef : undefined}
+                data-splitting=""
+                className="menu__item-title"
               >
-                <span
-                  ref={item.id === 'vetra' ? vetraTitleRef : undefined}
-                  data-splitting=""
-                  className="menu__item-title"
-                >
-                  {item.title}
-                </span>
-                <span data-splitting="" className={`menu__item-sub menu__item-sub--${item.id}`}>
-                  {item.subtitleText}
-                </span>
-              </Link>
-            ))}
+                {item.title}
+              </span>
+              <span data-splitting="" className={`menu__item-sub menu__item-sub--${item.id}`}>
+                {item.subtitleText}
+              </span>
+            </Link>
+          ))}
         </nav>
       </div>
 
@@ -977,6 +981,26 @@ function DemoTitleOverviewPage({ title }) {
   )
 }
 
+function FolderEntryRedirect({ to }) {
+  useEffect(() => {
+    window.location.assign(to)
+  }, [to])
+
+  return null
+}
+
+function getMenuItemTarget(item, demoMode) {
+  if (item.id === 'arbix') return item.overviewPath
+  return demoMode ? item.overviewPath : item.basePath
+}
+
+function renderOverviewElement(item) {
+  if (item.id === 'findoc') return <FinDocOnScrollOverviewPage />
+  if (item.id === 'vetra') return <ImageExpansionTypographyPage />
+  if (item.id === 'arbix') return <FolderEntryRedirect to={ARBIX_CODROPS_FOLDER_ENTRY} />
+  return <DemoTitleOverviewPage title={item.title} />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -1001,15 +1025,7 @@ export default function App() {
           <Route
             key={`${item.id}-overview`}
             path={item.overviewPath}
-            element={
-              item.id === 'findoc' ? (
-                <FinDocOnScrollOverviewPage />
-              ) : item.id === 'vetra' ? (
-                <ImageExpansionTypographyPage />
-              ) : (
-                <DemoTitleOverviewPage title={item.title} />
-              )
-            }
+            element={renderOverviewElement(item)}
           />
         ))}
         <Route path="/ImageExpansionTypography" element={<ImageExpansionTypographyPage />} />

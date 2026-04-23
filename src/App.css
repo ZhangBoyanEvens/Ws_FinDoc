@@ -242,6 +242,11 @@
   --grid-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2748%27%20height%3D%2748%27%20viewBox%3D%270%200%2048%2048%27%3E%3Cpath%20d%3D%27M0%2048%20L48%200%27%20stroke%3D%27%23dc2626%27%20stroke-opacity%3D%270.28%27%20stroke-width%3D%271%27%20fill%3D%27none%27/%3E%3Cpath%20d%3D%27M0%200%20L48%2048%27%20stroke%3D%27%23dc2626%27%20stroke-opacity%3D%270.28%27%20stroke-width%3D%271%27%20fill%3D%27none%27/%3E%3C/svg%3E");
 }
 
+/* FinDoc /findoc：浅灰蓝底，不改变 ::before 网格层 */
+.finDocShell.theme-findoc {
+  background: #f0f2f5;
+}
+
 .finCursorCanvas {
   position: fixed;
   inset: 0;
@@ -432,6 +437,15 @@
   flex: 1;
   min-height: calc(100svh - 64px);
   z-index: 1;
+}
+
+/* 仪表盘内容区可滚动；flex 子项需 min-height:0 才能出现滚动条 */
+.finMain.finMain--dashboard {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 720px) {
@@ -1538,6 +1552,7 @@
 
 .demoTitleOnScroll .vetraHeroSignalCanvas canvas {
   display: block;
+  filter: brightness(1.03) saturate(1.02);
 }
 
 .demoTitleOnScroll .vetraHeroTitleCluster {
@@ -1570,16 +1585,17 @@
   text-transform: uppercase;
   background: linear-gradient(
     180deg,
-    var(--shiny-cta-highlight-subtle) 0%,
-    var(--shiny-cta-highlight) 42%,
-    #2a2a9e 100%
+    #f1f5ff 0%,
+    #cdd9ff 18%,
+    var(--shiny-cta-highlight) 48%,
+    #3a3ac0 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow:
-    0 0 18px rgba(132, 132, 255, 0.5),
-    0 0 36px rgba(0, 0, 255, 0.28);
+    0 0 14px rgba(168, 178, 255, 0.42),
+    0 0 26px rgba(70, 90, 255, 0.22);
 }
 
 .demoTitleOnScroll .vetraHeroSignalCanvas__subtitle {
@@ -1607,8 +1623,8 @@
   background-clip: text;
   color: transparent;
   text-shadow:
-    0 0 22px rgba(160, 200, 255, 0.55),
-    0 0 40px rgba(132, 180, 255, 0.28);
+    0 0 14px rgba(160, 200, 255, 0.34),
+    0 0 24px rgba(132, 180, 255, 0.16);
 }
 
 .demoTitleOnScroll .vetraHeroSignalCanvas__subtitle span {
