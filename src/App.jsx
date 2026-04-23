@@ -1020,6 +1020,7 @@ export default function App() {
             element={renderOverviewElement(item)}
           />
         ))}
+        <Route path="/ArbiX" element={<ArbixOverviewPage />} />
         <Route path="/ImageExpansionTypography" element={<ImageExpansionTypographyPage />} />
       </Routes>
     </BrowserRouter>
