@@ -3,7 +3,7 @@ import { Item } from './item'
 import Lenis from '@studio-freight/lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Flip } from 'gsap/flip'
+import { Flip } from 'gsap/Flip'
 
 gsap.registerPlugin(ScrollTrigger, Flip)
 
