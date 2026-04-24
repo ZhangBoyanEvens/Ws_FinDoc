@@ -40,7 +40,7 @@ body.arbixWaveScroll #root {
 }
 
 .arbixWavePage .spacer {
-  height: 75svh;
+  height: 37.5svh;
 }
 
 .arbixWavePage .spacer-bottom {
@@ -332,17 +332,83 @@ body.arbixWaveScroll #root {
 }
 
 .arbixWavePage .parallax__content {
+  --parallax-content-mask: 100%;
   padding: var(--section-padding, 2rem) var(--page-padding);
   justify-content: center;
   align-items: center;
-  min-height: 100svh;
+  min-height: 100vh;
   display: flex;
   position: relative;
+}
+
+.arbixWavePage .parallax__asciiLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: calc(clamp(2.5rem, 8vh, 5.5rem) + 5rem);
+  padding-inline: clamp(0.5rem, 2vw, 2rem);
+  gap: clamp(0.25rem, 1vw, 1rem);
+  clip-path: inset(0 0 calc(100% - var(--parallax-content-mask)) 0);
+}
+
+.arbixWavePage .parallax__asciiArt {
+  margin: 0;
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.86);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: clamp(4px, 0.42vw, 7px);
+  line-height: 1.05;
+  letter-spacing: 0;
+  white-space: pre;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+.arbixWavePage .parallax__asciiArt--left,
+.arbixWavePage .parallax__asciiArt--right {
+  transform: scale(0.672);
+  transform-origin: top center;
+}
+
+.arbixWavePage .parallax__asciiArt--left {
+  transform: translateY(0.9rem) scale(0.672);
+}
+
+.arbixWavePage .parallax__content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--parallax-content-mask);
+  --cream-edge-depth: 18px;
+  --cream-edge-width: 56px;
+  background: #000;
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--cream-edge-depth)) no-repeat,
+    radial-gradient(
+      closest-side at 50% 0%,
+      #000 98%,
+      transparent 101%
+    ) bottom center / var(--cream-edge-width) calc(var(--cream-edge-depth) * 2) repeat-x;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--cream-edge-depth)) no-repeat,
+    radial-gradient(
+      closest-side at 50% 0%,
+      #000 98%,
+      transparent 101%
+    ) bottom center / var(--cream-edge-width) calc(var(--cream-edge-depth) * 2) repeat-x;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .arbixWavePage .osmo-icon-svg {
   width: 8em;
   position: relative;
+  z-index: 3;
   color: rgba(255, 255, 255, 0.86);
 }
 

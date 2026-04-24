@@ -9,6 +9,105 @@ import { preloadImages } from './utils'
 import './arbixWave.css'
 
 const MENU_RESTORE_DEMO_TO = '/menu?demo=1'
+const PARALLAX_ASCII_ART = String.raw`
+                                                             ./czcczrI       <xXzczv1,-jczccunnxxxucu,
+                                                           )zY:      xz\   xcf      +zc}           'vx
+                                                          vv           /cjX{          ^zu\_^     ^jzr~+>!'
+                                                         nf             1z~             nzczzczccc)]+~<>-1rzv}
+                                                        \z                               zvcu?l(uzu?         nr
+                                                        c1                               fY Iuu:  ~nzv+    <vx.
+                                                       ,X<         vzj             ccx   {X   ]c|    (vcxvzz{"
+                                    i)):                z}         zzn             Xcu   tY     cz\`    >vcu+}tuvcz\
+                           '~|xuXx]^   ^ci              rY         Xcu             zcu   X|      uv      -zcl     ]c\
+                   \`+(fncf+.            "c             /cc/        ']   ]z<         ]'  ur        /X;      \zt     xn
+               )c\_,      ;_(nzx}        v-           xz- cn           |cxz]           vu          zu       >cvl-xc|
+              c!       f1>\`   "+/uut}-n" ]j          tz>   1Xj^      )ct   rv]      ;nz-            vj       ^czcczcj-
+              c.       +jvuf(+\`       _n  v,        (c(      !fucczux-       {rvXzcn/:              <c>        xc+  "|nc:
+              j[  vn|<                 v^ ]r       :zx                                               cn         uz]    rz
+              ,c  X,                   t{  c\`      /c:               <        }                      :z_         jv;  jv[
+               f{ ]\                   In  c]     'zz                X[      <z"                      xx          czcz?
+               +v  v^           .i{|(f  f< ;u     (z-                xz      /v                       [v\`         ;zn]uc}
+                c, \{     -))t :I;_1}({ >z  x~    nz                 ,z(    ?c?                       :X_          \z-  /v^
+                )| Ir  r\` )~~<;.r_{u]+j  v: ?r    uu                   |zzccf                          z\           vz\` ]c:
+                 c  ul ;?'I\-!\ /ff}l I: /)  c^  .cr                                                   cu           ?Xnzx
+                 \) in  |:~f<\t""\"       c  f{  .cf                                                   nc           \`cccc]
+                 >n  v, ~I+               \1  z   vr                                                   nv            jz_,c\
+                  vI f{                   !c  f]  nz                                                   cv            ~zn_z}   <)frnxr|,
+                  _n 'n                    c; ?n|uzz-                                             +zcczcccc\~         zzccnczcx)+i::ljz?
+                   v\` f-               'l-|z'  z\I;zz                                            }c/      ;}cz[     .jzcx{l          |z?
+                   \) iv        "+jvvj(<       (t  /cl                                           lzu         1z]     >\`            1zz-
+                   Iv  v1[xcux/>                c^ ,zu                                            <zu"       !z/               ,rzcn~
+                    r~           v1?c           x}  \zf                                             jcz}    :ccI            |cvzf
+                    >z           x)1c         \`ncczczuz}                                            ,Xrczzzzz/     )\        ^uv,
+                     u:                <{tuzr}Ilx?    fz)                                           nu           1ccucr:      .zc
+                     |t        l[/uvt{~I:i?|xcx[       )zt                                         vu          (cc~  .|zc\!    fc,
+                     'ccvxvnt1+I,l-\nvj(-I              ivu^                                      tX,       :fzx!       ^{nzzzzc[
+                      Ic\i-tvux/}I                        tzj                                    xv.      }cct
+                                                            xzc'                                vc^    ]vzu~
+                                                              (czf                            ,ct  :tvzc<
+                                                                ^\zvu(I                      )zurczX/,
+                                                                    !(czvcx|]>;^      .,!-|nczzn[I
+                                                                         ">])trnvcczcvvxf(]i'
+`
+const PARALLAX_ASCII_ART_RIGHT = String.raw`
+                                                                                                  -1{1{1{1{1{1{1]\`
+                                                                                                rxrxrxrxrxrxrxrxrxx<
+                                                                                               nrxrxrxrxrxrxrxrxrrrx
+                                                                                               xrxrxrxrxrxrxrxrxrxxr
+                                            ,IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII+xrxrxrxrxrxrxrxrxrxrx
+                                      -nrxrxrrxrrrxrrrxrrrxrrrxrrrxrrrxrrrxrrrxrrrxrrrxrrrxrrrxrxrxrxrxrxrxrxrxrxrx|
+                                   +xxrxrxrxrxrxxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxxrxrxrxrxrxrxrxrxrxrxrxrx[
+                                 'xrxrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrxr
+                                1rxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrrxrrxrxrxrxrxr[
+                               [xrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxx;
+                               xrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxx
+                              ;rxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrrxrxrrx;
+                              [rxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrx|~,          "~|xrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxr}
+                              {xrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrxrj<                       ,xrxrxrxrxrrxrxrxrxrxrxrxrxxrxrxrxrx)
+                              {rxrxrxrxrxrxrxrxrxrxrxrrxrxrxx?                            -xrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrx1
+                              {xrxrxrxrxrxrxrxrxrxrxrxrxrx1                               xxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrx)
+                              {rxrxrxrxrxrxrxrxrxrxrxrxx!                                 rxrxrrx|-(xrxrxrxrxrxrxrxrxrxrxrxrr)
+                              {xrxrxrxrxrxrxrxrxrxrxrri                                  xrxrxr{     fxrxrrxrxrxrxrxrxrxrxrxr)
+                              {rxrxrxrxrxrxrxrxrxrxr)                                   :xrxrr       ^rxrxrxrxrxrxrxrxrxrxrxr)
+                              {xrxrxrrxrrxrxrxrxrxr                                     rrxxl        xrxrxrxrxrrxrxrxrxrxrxrx)
+                              {rxrxrxrxrxrxrxrrxrj                      [uxrxrxrxxn}  {rxrr        \rrxrxrxrxrxrxrxrxrxrrxrxr)
+                              {xrxrxrxrxrxrxrxrxf                   frxrxrrxrxrxrxrxrxrxrn       lrxrxrxrxrxrxrxrxrxrxrxrxrxr)
+                              {rxrxrxrxrxrxrxrx|                 -xrxrxrxrxrxrxrxrxrxrxrxrx     rrxrxrxf[  +rrxrxrxrxrxrxrxrx1
+                              {xrxrxrxrxrxrxrxx                Ixrxrxrxrxrxrxrxrxrxrxrxrxrrxrxxrxrxf[        xxrxrxrrxrxrxrxr)
+                              {rxrxrxrxrxrxrxx                xxrxrxrxrxrxrxrxrxrxrxrxrxrxrxxrxxf            nrxrxrxrxrxrxrxr)
+                              {xrxrxrxrxrxrxr|               xxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxr|           <xrxrxrxrxrxrxrxrx)
+                              {rxrxrrxrxrxrrx               jrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrr       >xxrxrxrxrxrxrxrxrxrxr)
+                              {xrxrxrxrxrrxx(              xrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxx{/xxrrxrxrxrxrxrxrxrxrxrxrr)
+                              {rxrxrxrxrxrxr,              xrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxr)
+                              {xrxrxrxrxrxrx              ;xrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrx           (rxrxrxrxrxrxrx)
+                              {rxrxrxrxrxrxr              [rxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrx/              rxrxrxrxrrxrr)
+                              {xrxrxrxrxrxrx              ]xrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrrr              xrxrxrrxrxrxx1
+                              {rxrxrxrxrxrxr              :rxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxr1         "fxrxrxrxrxrxrxr)
+                              {xrxrxrxrxrxrx:              rxrxrxrrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrxrxxrxrxrxrxrxrxrxrxrxrxrxrxr)
+                              {rxrxrxrrxrrxr/              /rxrxrxrxrxrxrxrxrxrrxxrxrxrxrrxrrxrxr}  trxrxrxrxrxrxrxrxrxrxrxrx)
+                              {xrxrxrxrxrxrxx               /rxrxrxrxrxrxrxrxrxxrrxrxrrxrxrxrxrt        txrxrxrxrxrxrxrxrxrxr)
+                              {rxrxrxrxrxrxrx|               xrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrx\            rrxrxrxrxrxrxrxrx1
+                              {xrxrxrxrxrxrxrx                rrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrj            nrxrxrxrxrxrxrxr)
+                              {rxrxrxrxrxrxrxrx                 xxrxrxrxrxrxrxrxrxrxrxrxrxrxnjxxxrxx|^       xrxrxrrxrxrxrxrx)
+                              {xrxrxrxrxrxrxrxrf                  rxrxrxrxrrxrxrxrxrxrxrxr|     /xrrxrxx(!I1xrxrxrxrxrxrrxrxr)
+                              {rxrxrrxrxrxrxrxrxj                   ixxrxrxrxrxrxrxrxrxrxx        xrxrrxrrxrxrxrxrxrxrxrxrxrr)
+                              {xrxrxrxrxrxrxrxrxrx                       [xnxxrxnn[    xrxx        [rxrxrxrxrxrxrxrxrxrxrxrxr)
+                              {rxrxrxrxrxrxrxrxrxrx!                                    frrx[        xxrxrxrxrxrxrxrxrxrxrxrx)
+                              {xrxrxrxrxrxrxrxrxrxrxt                                   'xrxrx       .xrxrxrxrxrxrxrxrxrxrxrr)
+                              {rxrxrxrxrxrrxrxrxrxrrrx{                                  trxrxr/     rxrxrxrxrxrxrxrxrxrxrxrx)
+                              {xrxrxrxrxrxrxrxrxrxrxxrxr{                                 xrxrxrxrtxrxrxrxrxrxrxrxrxrxrxrxrxr)
+                              {rxrxrxrxrxrxrxrxrxrxrxrxrxrf                               frxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxr)
+                              {xrxrxrxrrxrxrxrrxrxrxrxrxrxrxr/                            {xrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrx)
+                              {rxrxrxrxrxrxrxrxrxrxrxrxrxrxrxxrxx\`                      -rxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrr)
+                              ?xrxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrrrxrxxnt?I.       I-/nxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrx}
+                               rxrxrrxrxrxrxrxrxrxrrxrxrxrxrxrxrxxrxrrrrxrxrxrxrxrxxrrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrxrI
+                               xxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrxxrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxr
+                                xrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxxi
+                                ;xrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxr]
+                                  xxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrx
+                                   "xrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrxrxrrxrxrxrxrrxrxrr\`
+                                      irrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrrxxx/"
+`
 const BRANDS = [
   ['Tesla', 'tesla.webp'],
   ['Chanel', 'chanel.webp'],
@@ -103,6 +202,21 @@ export function ArbixOverviewPage() {
       })
       parallaxTimelines.push(timeline)
     })
+
+    const parallaxContent = root.querySelector('.parallax__content')
+    if (parallaxContent) {
+      const contentMaskTimeline = gsap.to(parallaxContent, {
+        '--parallax-content-mask': '0%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: parallaxContent,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.8,
+        },
+      })
+      parallaxTimelines.push(contentMaskTimeline)
+    }
 
     const dualWaveWrapper = dualWaveWrapperRef.current
     if (dualWaveWrapper) {
@@ -253,7 +367,7 @@ export function ArbixOverviewPage() {
                     className="parallax__layer-img"
                   />
                   <div data-parallax-layer="3" className="parallax__layer-title">
-                    <h2 className="parallax__title">Parallax</h2>
+                    <h2 className="parallax__title">ArbiX</h2>
                   </div>
                   <img
                     src="https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717795bb5aceca85011ad83_osmo-parallax-layer-1.webp"
@@ -267,9 +381,10 @@ export function ArbixOverviewPage() {
               </div>
             </section>
             <section className="parallax__content">
-              <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 160 160" fill="none" className="osmo-icon-svg">
-                <path d="M94.8284 53.8578C92.3086 56.3776 88 54.593 88 51.0294V0H72V59.9999C72 66.6273 66.6274 71.9999 60 71.9999H0V87.9999H51.0294C54.5931 87.9999 56.3777 92.3085 53.8579 94.8283L18.3431 130.343L29.6569 141.657L65.1717 106.142C67.684 103.63 71.9745 105.396 72 108.939V160L88.0001 160L88 99.9999C88 93.3725 93.3726 87.9999 100 87.9999H160V71.9999H108.939C105.407 71.9745 103.64 67.7091 106.12 65.1938L106.142 65.1716L141.657 29.6568L130.343 18.3432L94.8284 53.8578Z" fill="currentColor" />
-              </svg>
+              <div className="parallax__asciiLayer" aria-hidden="true">
+                <pre className="parallax__asciiArt parallax__asciiArt--left">{PARALLAX_ASCII_ART}</pre>
+                <pre className="parallax__asciiArt parallax__asciiArt--right">{PARALLAX_ASCII_ART_RIGHT}</pre>
+              </div>
             </section>
           </div>
           <div className="osmo-credits">
