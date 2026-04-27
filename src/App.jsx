@@ -22,7 +22,6 @@ import {
 } from './onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import { ImageExpansionTypographyPage } from './imageExpansionTypography/ImageExpansionTypographyPage.jsx'
 import { ArbixOverviewPage } from './arbixWave/ArbixOverviewPage.jsx'
-import { FinDocDashboard } from './findoc/FinDocDashboard.jsx'
 import './App.css'
 import './onScrollViewSwitch/ersaLink.css'
 
@@ -157,7 +156,6 @@ function playDemoCurtainOut(pathEl, onComplete) {
 }
 
 function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
-  const isFinDocShell = themeClass === 'theme-findoc'
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -303,8 +301,15 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
         </div>
       </header>
 
-      <main className={`finMain ${isFinDocShell ? 'finMain--dashboard' : ''}`}>
-        {isFinDocShell ? <FinDocDashboard /> : null}
+      <main className="finMain finMain--dashboard">
+        <section
+          className={`finDocMaintenance finDocMaintenance--${themeClass.replace('theme-', '')}`}
+          role="status"
+          aria-live="polite"
+          aria-label={`${brandName} maintenance notice`}
+        >
+          <h1>Under maintenance</h1>
+        </section>
       </main>
     </div>
   )
@@ -982,7 +987,6 @@ function DemoTitleOverviewPage({ title }) {
 }
 
 function getMenuItemTarget(item, demoMode) {
-  if (item.id === 'arbix') return item.overviewPath
   return demoMode ? item.overviewPath : item.basePath
 }
 

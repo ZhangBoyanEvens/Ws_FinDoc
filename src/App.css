@@ -234,11 +234,13 @@
 
 .finDocShell.theme-vetra {
   --accent-rgb: 37, 99, 235;
+  --fin-nav-pan-accent: #bfdbfe;
   --grid-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2748%27%20height%3D%2748%27%20viewBox%3D%270%200%2048%2048%27%3E%3Cpath%20d%3D%27M0%2048%20L48%200%27%20stroke%3D%27%231d4ed8%27%20stroke-opacity%3D%270.28%27%20stroke-width%3D%271%27%20fill%3D%27none%27/%3E%3Cpath%20d%3D%27M0%200%20L48%2048%27%20stroke%3D%27%231d4ed8%27%20stroke-opacity%3D%270.28%27%20stroke-width%3D%271%27%20fill%3D%27none%27/%3E%3C/svg%3E");
 }
 
 .finDocShell.theme-arbix {
   --accent-rgb: 220, 38, 38;
+  --fin-nav-pan-accent: #fecaca;
   --grid-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2748%27%20height%3D%2748%27%20viewBox%3D%270%200%2048%2048%27%3E%3Cpath%20d%3D%27M0%2048%20L48%200%27%20stroke%3D%27%23dc2626%27%20stroke-opacity%3D%270.28%27%20stroke-width%3D%271%27%20fill%3D%27none%27/%3E%3Cpath%20d%3D%27M0%200%20L48%2048%27%20stroke%3D%27%23dc2626%27%20stroke-opacity%3D%270.28%27%20stroke-width%3D%271%27%20fill%3D%27none%27/%3E%3C/svg%3E");
 }
 
@@ -446,6 +448,53 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+}
+
+.finDocMaintenance {
+  min-height: calc(100svh - 64px);
+  display: grid;
+  place-items: center;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.finDocMaintenance > h1 {
+  margin: 0;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1.5rem, 3.2vw, 2.5rem);
+  border-radius: 0.95rem;
+  background: #16a34a;
+  color: #f0fdf4;
+  font-size: clamp(1.5rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-align: center;
+  box-shadow:
+    0 0 0 1px rgba(220, 252, 231, 0.35),
+    0 16px 44px rgba(22, 163, 74, 0.35);
+}
+
+.finDocMaintenance--findoc > h1 {
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 55%, #22c55e 100%);
+  color: #f0fdf4;
+  box-shadow:
+    0 0 0 1px rgba(220, 252, 231, 0.38),
+    0 16px 44px rgba(21, 128, 61, 0.38);
+}
+
+.finDocMaintenance--vetra > h1 {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+  color: #eff6ff;
+  box-shadow:
+    0 0 0 1px rgba(219, 234, 254, 0.38),
+    0 16px 44px rgba(29, 78, 216, 0.38);
+}
+
+.finDocMaintenance--arbix > h1 {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 55%, #ef4444 100%);
+  color: #fef2f2;
+  box-shadow:
+    0 0 0 1px rgba(254, 226, 226, 0.38),
+    0 16px 44px rgba(185, 28, 28, 0.38);
 }
 
 @media (max-width: 720px) {

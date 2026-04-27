@@ -342,6 +342,7 @@ body.arbixWaveScroll #root {
 }
 
 .arbixWavePage .parallax__asciiLayer {
+  --arbix-ascii-reveal: 0;
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -353,6 +354,7 @@ body.arbixWaveScroll #root {
   padding-inline: clamp(0.5rem, 2vw, 2rem);
   gap: clamp(0.25rem, 1vw, 1rem);
   clip-path: inset(0 0 calc(100% - var(--parallax-content-mask)) 0);
+  opacity: 0;
 }
 
 .arbixWavePage .parallax__asciiArt {
@@ -365,16 +367,23 @@ body.arbixWaveScroll #root {
   letter-spacing: 0;
   white-space: pre;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+  clip-path: inset(
+    0
+    calc((1 - var(--arbix-ascii-reveal)) * 50%)
+    0
+    calc((1 - var(--arbix-ascii-reveal)) * 50%)
+  );
+  will-change: clip-path;
 }
 
 .arbixWavePage .parallax__asciiArt--left,
 .arbixWavePage .parallax__asciiArt--right {
-  transform: scale(0.672);
+  transform: scale(0.62);
   transform-origin: top center;
 }
 
 .arbixWavePage .parallax__asciiArt--left {
-  transform: translateY(0.9rem) scale(0.672);
+  transform: translateY(0.9rem) scale(0.62);
 }
 
 .arbixWavePage .parallax__content::before {
@@ -439,6 +448,81 @@ body.arbixWaveScroll #root {
   color: rgba(239, 238, 236, 0.94);
 }
 
+.arbixWavePage .arbixWhatIs {
+  position: relative;
+  z-index: 4;
+  min-height: clamp(12rem, 26vh, 18rem);
+  margin: clamp(-11rem, -18vh, -7.5rem) 0 clamp(15.75rem, 22vh, 16.8rem);
+  display: grid;
+  place-items: center;
+  gap: 0.6rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.arbixWavePage .arbixWhatIs__eyebrow,
+.arbixWavePage .arbixWave__eyebrow {
+  margin: 0;
+  font-family: 'Montserrat Alternates', system-ui, sans-serif;
+  font-size: clamp(0.78rem, 1.25vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 255, 0.72);
+}
+
+.arbixWavePage .arbixWave__eyebrow {
+  position: absolute;
+  top: clamp(-12.25rem, -19vw, -11.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0;
+  font-size: clamp(2.34rem, 3.75vw, 3rem);
+  z-index: 4;
+  width: max-content;
+}
+
+.arbixWavePage .arbixWhatIs__title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.08em;
+  white-space: nowrap;
+  font-family: 'PP Neue Corp Wide', 'Montserrat Alternates', sans-serif;
+  font-size: clamp(2.2rem, 7.5vw, 6.2rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  background: linear-gradient(135deg, #f8fafc 0%, #bfdbfe 34%, #93c5fd 60%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.16);
+  text-shadow: 0 0 10px rgba(147, 197, 253, 0.2);
+}
+
+.arbixWavePage .arbixWhatIs__left,
+.arbixWavePage .arbixWhatIs__mark {
+  display: inline-block;
+  font: inherit;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.arbixWavePage .arbixWhatIs__brand {
+  display: inline-block;
+  transform-origin: center center;
+  font: inherit;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 @font-face {
   font-family: 'PP Neue Corp Wide';
   src: url('https://cdn.prod.website-files.com/671752cd4027f01b1b8f1c7f/6717e399d30a606fed425914_PPNeueCorp-WideUltrabold.woff2')
@@ -461,6 +545,7 @@ body.arbixWaveScroll #root {
   display: flex;
   width: 100%;
   position: relative;
+  padding-top: clamp(8.5rem, 14vw, 11rem);
   gap: 25vw;
 }
 

@@ -173,7 +173,7 @@ export function ArbixOverviewPage() {
 
     if (typeof ScrollSmoother?.create === 'function') {
       smoother = ScrollSmoother.create({
-        smooth: 1.5,
+        smooth: 0.9,
         normalizeScroll: true,
       })
     }
@@ -216,10 +216,80 @@ export function ArbixOverviewPage() {
         },
       })
       parallaxTimelines.push(contentMaskTimeline)
+
+      const asciiLayer = parallaxContent.querySelector('.parallax__asciiLayer')
+      if (asciiLayer) {
+        const asciiRevealTween = gsap.to(asciiLayer, {
+          '--arbix-ascii-reveal': 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: parallaxContent,
+            start: 'top 85%',
+            end: 'bottom 25%',
+            scrub: 0.53,
+          },
+        })
+        parallaxTimelines.push(asciiRevealTween)
+      }
+    }
+
+    const whatIsSection = root.querySelector('.arbixWhatIs')
+    if (whatIsSection) {
+      const leftText = whatIsSection.querySelector('.arbixWhatIs__left')
+      const brandText = whatIsSection.querySelector('.arbixWhatIs__brand')
+      const markText = whatIsSection.querySelector('.arbixWhatIs__mark')
+
+      if (leftText && brandText && markText) {
+        gsap.set(brandText, { opacity: 0, scaleX: 0.25, scaleY: 0.7, y: 20, filter: 'blur(10px)' })
+        gsap.set([leftText, markText], { x: 0 })
+
+        const whatIsTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: whatIsSection,
+            start: 'top+=10rem 82%',
+            end: 'top+=10rem 56%',
+            scrub: 1.05,
+          },
+        })
+
+        whatIsTimeline
+          .to(leftText, { x: '-0.62em', ease: 'none' }, 0)
+          .to(markText, { x: '0.62em', ease: 'none' }, 0)
+          .to(
+            brandText,
+            {
+              opacity: 1,
+              scaleX: 1,
+              scaleY: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              ease: 'none',
+            },
+            0,
+          )
+
+        parallaxTimelines.push(whatIsTimeline)
+      }
     }
 
     const dualWaveWrapper = dualWaveWrapperRef.current
     if (dualWaveWrapper) {
+      const waveImage = dualWaveWrapper.querySelector('.image-thumbnail-wrapper')
+      if (waveImage) {
+        gsap.set(waveImage, { opacity: 0 })
+        const waveImageFade = gsap.to(waveImage, {
+          opacity: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: dualWaveWrapper,
+            start: 'top 85%',
+            end: 'top 35%',
+            scrub: 0.9,
+          },
+        })
+        parallaxTimelines.push(waveImageFade)
+      }
+
       preloadImages('.arbixWavePage .dual-wave-wrapper img').finally(() => {
         if (cancelled) return
         waveAnimation = new DualWaveAnimation(dualWaveWrapper)
@@ -400,6 +470,14 @@ export function ArbixOverviewPage() {
               </a>
             </p>
           </div>
+          <section className="arbixWhatIs" aria-label="What is ArbiX section">
+            <p className="arbixWhatIs__eyebrow">See the spread. Seize the profit.</p>
+            <h2 className="arbixWhatIs__title">
+              <span className="arbixWhatIs__left">What is</span>
+              <span className="arbixWhatIs__brand">ArbiX</span>
+              <span className="arbixWhatIs__mark">?</span>
+            </h2>
+          </section>
           <div className="spacer" />
           <div
             ref={dualWaveWrapperRef}
@@ -408,6 +486,7 @@ export function ArbixOverviewPage() {
             data-wave-number="12"
             data-wave-speed="1"
           >
+            <p className="arbixWave__eyebrow">Arbitrage Intelligence</p>
             <div className="wave-column wave-column-left">
               {list.map(([name, image], idx) => (
                 <div key={`l-${name}-${idx}`} className="animated-text" data-image={`/arbix-wave/${image}`}>
