@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger.js'
+import { Flip } from 'gsap/Flip.js'
 
 import imagesLoaded from 'imagesloaded'
 import Lenis from '@studio-freight/lenis'
