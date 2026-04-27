@@ -109,31 +109,50 @@ const PARALLAX_ASCII_ART_RIGHT = String.raw`
                                       irrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrxrrxrxrxrxrxrxrxrxrxrxrxrxrxrrxrxrxrxrrxxx/"
 `
 const BRANDS = [
-  ['Tesla', 'tesla.webp'],
-  ['Chanel', 'chanel.webp'],
-  ['Apple', 'apple.webp'],
-  ['BMW', 'BMW.webp'],
-  ['Saint Laurent', 'YSL.webp'],
-  ['Nike', 'nike.webp'],
-  ['Hermes', 'hermes.webp'],
-  ['Adidas', 'adidas.webp'],
-  ['Prada', 'prada.webp'],
-  ['Google', 'google.webp'],
-  ['Polestar', 'polestar.webp'],
-  ['Balenciaga', 'balenciaga.webp'],
-  ['Audi', 'audi.webp'],
-  ['Valentino', 'valentino.webp'],
-  ['Samsung', 'samsung.webp'],
-  ['Bottega Veneta', 'bottega.webp'],
-  ['Sony', 'sony.webp'],
-  ['Aesop', 'aesop.webp'],
-  ['Dior', 'dior.webp'],
-  ['Porsche', 'porsche.webp'],
-  ['Microsoft', 'microsoft.webp'],
-  ['Lexus', 'lexus.webp'],
-  ['Mercedes-Benz', 'mercedes.webp'],
-  ['Huawei', 'huawei.webp'],
+  { name: 'Yamaha', score: 38 },
+  { name: 'Gibson', score: 38 },
+  { name: 'Fender', score: 35 },
+  { name: 'Martin', score: 33 },
+  { name: 'Taylor', score: 33 },
+  { name: 'Roland', score: 28 },
+  { name: 'Apple', score: 15 },
+  { name: 'Sony', score: 20 },
+  { name: 'Bose', score: 20 },
+  { name: 'DJI', score: 22 },
+  { name: 'Canon', score: 17 },
+  { name: 'Nikon', score: 17 },
+  { name: 'Rolex', score: 25 },
+  { name: 'Omega', score: 22 },
+  { name: 'Tudor', score: 18 },
+  { name: 'Seiko', score: 15 },
+  { name: 'Casio', score: 13 },
+  { name: 'Tag Heuer', score: 17 },
+  { name: 'Hermès', score: 40 },
+  { name: 'Chanel', score: 35 },
+  { name: 'Louis Vuitton', score: 30 },
+  { name: 'Gucci', score: 26 },
+  { name: 'Dior', score: 29 },
+  { name: 'Prada', score: 22 },
+  { name: 'Sennheiser', score: 28 },
+  { name: 'Bowers & Wilkins', score: 24 },
+  { name: 'Marshall', score: 20 },
+  { name: 'Shure', score: 25 },
+  { name: 'Audio-Technica', score: 20 },
+  { name: 'Leica', score: 40 },
+  { name: 'Fujifilm', score: 22 },
+  { name: 'Dyson', score: 20 },
 ]
+
+function getScoreColor(score) {
+  if (score > 30) return '#ef4444'
+  if (score > 20) return '#3b82f6'
+  if (score > 10) return '#22c55e'
+  return '#6b7280'
+}
+
+function getScoreScale(score) {
+  return 0.8 + score / 50
+}
 
 export function ArbixOverviewPage() {
   const rootRef = useRef(null)
@@ -147,7 +166,10 @@ export function ArbixOverviewPage() {
     offsetX: 0,
     offsetY: 0,
   })
-  const list = useMemo(() => [...BRANDS, ...BRANDS], [])
+  const list = useMemo(() => {
+    const extraCount = Math.floor(BRANDS.length / 3)
+    return [...BRANDS, ...BRANDS.slice(0, extraCount)]
+  }, [])
   const [navEntered, setNavEntered] = useState(false)
 
   useEffect(() => {
@@ -484,27 +506,54 @@ export function ArbixOverviewPage() {
             className="dual-wave-wrapper"
             data-animation="dual-wave"
             data-wave-number="12"
-            data-wave-speed="1"
+            data-wave-speed="0.85"
+            data-wave-amplitude="1.15"
           >
             <p className="arbixWave__eyebrow">Arbitrage Intelligence</p>
             <div className="wave-column wave-column-left">
-              {list.map(([name, image], idx) => (
-                <div key={`l-${name}-${idx}`} className="animated-text" data-image={`/arbix-wave/${image}`}>
+              <div className="wave-column__region wave-column__region--left">China</div>
+              {list.map(({ name, score }, idx) => (
+                <div
+                  key={`l-${name}-${idx}`}
+                  className="animated-text"
+                  data-brand={name}
+                  data-score={score}
+                >
                   {name}
                 </div>
               ))}
             </div>
             <div className="image-thumbnail-wrapper">
-              <img src="/arbix-wave/tesla.webp" alt="brand preview" className="image-thumbnail" />
+              <div className="image-thumbnail image-thumbnail--score" aria-label="brand score preview" />
             </div>
             <div className="wave-column wave-column-right">
-              {list.map(([name], idx) => (
+              <div className="wave-column__region wave-column__region--right">Singapore</div>
+              {list.map(({ name, score }, idx) => (
                 <div key={`r-${name}-${idx}`} className="animated-text">
                   {name}
                 </div>
               ))}
             </div>
           </div>
+          <p className="waveDataDisclaimer">
+            Data as of 20/3/2026, for reference only.
+          </p>
+          <section className="arbixIntroSection" aria-label="Arbix intro section">
+            <div className="arbixIntroSection__backdrop" aria-hidden="true" />
+            <div className="arbixIntroSection__card">
+              <div className="arbixIntroSection__copy">
+                <span className="arbixIntroSection__badge">INTRO</span>
+                <p className="arbixIntroSection__text">
+                  ArbiX scans cross-market spreads in real time and highlights executable opportunities
+                  with ranked confidence, so your team can act faster with clearer signals.
+                </p>
+              </div>
+              <div className="arbixIntroSection__stat">
+                <span className="arbixIntroSection__statValue">20+</span>
+                <span className="arbixIntroSection__statLabel">Key data dimensions tracked</span>
+              </div>
+            </div>
+          </section>
           <div className="spacer-bottom" />
         </div>
       </main>

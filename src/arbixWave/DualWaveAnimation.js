@@ -13,10 +13,14 @@ export class DualWaveAnimation {
     const waveSpeed = this.wrapper?.dataset.waveSpeed
       ? Number.parseFloat(this.wrapper.dataset.waveSpeed)
       : 1
+    const waveAmplitude = this.wrapper?.dataset.waveAmplitude
+      ? Number.parseFloat(this.wrapper.dataset.waveAmplitude)
+      : 1
 
     this.config = {
       waveNumber,
       waveSpeed,
+      waveAmplitude,
       ...options,
     }
 
@@ -59,26 +63,23 @@ export class DualWaveAnimation {
   }
 
   calculateRanges() {
-    const maxLeftTextWidth = Math.max(...this.leftTexts.map((t) => t.offsetWidth))
-    const maxRightTextWidth = Math.max(...this.rightTexts.map((t) => t.offsetWidth))
-
     this.leftRange = {
       minX: 0,
-      maxX: this.leftColumn.offsetWidth - maxLeftTextWidth,
+      maxX: this.leftColumn.offsetWidth,
     }
     this.rightRange = {
       minX: 0,
-      maxX: this.rightColumn.offsetWidth - maxRightTextWidth,
+      maxX: this.rightColumn.offsetWidth,
     }
   }
 
   setInitialPositions(texts, range, multiplier) {
-    const rangeSize = range.maxX - range.minX
     texts.forEach((text, index) => {
+      const textRange = Math.max(0, range.maxX - range.minX - text.offsetWidth)
       const initialPhase = this.config.waveNumber * index - Math.PI / 2
       const initialWave = Math.sin(initialPhase)
       const initialProgress = (initialWave + 1) / 2
-      const startX = (range.minX + initialProgress * rangeSize) * multiplier
+      const startX = (range.minX + initialProgress * textRange) * multiplier
       gsap.set(text, { x: startX })
     })
   }
@@ -115,10 +116,10 @@ export class DualWaveAnimation {
   }
 
   updateColumn(texts, setters, range, progress, focusedIndex, multiplier) {
-    const rangeSize = range.maxX - range.minX
     texts.forEach((text, index) => {
+      const textRange = Math.max(0, range.maxX - range.minX - text.offsetWidth)
       const finalX =
-        this.calculateWavePosition(index, progress, range.minX, rangeSize) * multiplier
+        this.calculateWavePosition(index, progress, range.minX, textRange) * multiplier
       setters[index](finalX)
       text.classList.toggle('focused', index === focusedIndex)
     })
@@ -126,10 +127,14 @@ export class DualWaveAnimation {
 
   updateThumbnail(thumbnail, focusedText) {
     if (!thumbnail || !focusedText) return
-    const newImage = focusedText.dataset.image
-    if (newImage && this.currentImage !== newImage) {
-      this.currentImage = newImage
-      thumbnail.src = newImage
+    const score = Number.parseFloat(focusedText.dataset.score || '0')
+    const color = score > 30 ? '#ef4444' : score > 20 ? '#3b82f6' : score > 10 ? '#22c55e' : '#6b7280'
+    const sizeRem = Math.max(1.6, Math.min(4.4, 1.2 + score * 0.08))
+    if (this.currentImage !== String(score)) {
+      this.currentImage = String(score)
+      thumbnail.innerHTML = `<span class="image-thumbnail__score">${score}%</span>`
+      thumbnail.style.setProperty('--thumbnail-accent', color)
+      thumbnail.style.setProperty('--thumbnail-score-size', `${sizeRem}rem`)
     }
 
     const wrapperRect = this.wrapper.getBoundingClientRect()
@@ -150,7 +155,9 @@ export class DualWaveAnimation {
       Math.PI / 2
     const wave = Math.sin(phase)
     const cycleProgress = (wave + 1) / 2
-    return minX + cycleProgress * range
+    const centeredProgress = (cycleProgress - 0.5) * this.config.waveAmplitude + 0.5
+    const clampedProgress = Math.max(0, Math.min(1, centeredProgress))
+    return minX + clampedProgress * range
   }
 
   findClosestToViewportCenter() {
