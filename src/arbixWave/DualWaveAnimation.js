@@ -161,6 +161,14 @@ export class DualWaveAnimation {
   }
 
   findClosestToViewportCenter() {
+    const wrapperRect = this.wrapper.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+    const topLockLine = viewportHeight * 0.4
+    const bottomLockLine = viewportHeight * 0.6
+
+    if (wrapperRect.top >= topLockLine) return 0
+    if (wrapperRect.bottom <= bottomLockLine) return this.leftTexts.length - 1
+
     const viewportCenter = window.innerHeight / 2
     let closestIndex = 0
     let minDistance = Number.POSITIVE_INFINITY

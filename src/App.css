@@ -35,6 +35,84 @@
   --shiny-cta-highlight-subtle: #8484ff;
 }
 
+html.finDocOverviewScroll,
+body.finDocOverviewScroll {
+  --overview-scroll-accent-start: rgba(187, 247, 208, 0.95);
+  --overview-scroll-accent-end: rgba(34, 197, 94, 0.92);
+}
+
+html.vetraOverviewScroll,
+body.vetraOverviewScroll {
+  --overview-scroll-accent-start: rgba(191, 219, 254, 0.95);
+  --overview-scroll-accent-end: rgba(59, 130, 246, 0.92);
+}
+
+html.arbixWaveScroll,
+body.arbixWaveScroll {
+  --overview-scroll-accent-start: rgba(254, 202, 202, 0.95);
+  --overview-scroll-accent-end: rgba(239, 68, 68, 0.92);
+}
+
+html.finDocOverviewScroll,
+body.finDocOverviewScroll,
+html.vetraOverviewScroll,
+body.vetraOverviewScroll,
+html.arbixWaveScroll,
+body.arbixWaveScroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--overview-scroll-accent-end) rgba(15, 23, 42, 0.28);
+}
+
+html.finDocOverviewScroll::-webkit-scrollbar,
+body.finDocOverviewScroll::-webkit-scrollbar,
+html.vetraOverviewScroll::-webkit-scrollbar,
+body.vetraOverviewScroll::-webkit-scrollbar,
+html.arbixWaveScroll::-webkit-scrollbar,
+body.arbixWaveScroll::-webkit-scrollbar {
+  width: 12px;
+}
+
+html.finDocOverviewScroll::-webkit-scrollbar-track,
+body.finDocOverviewScroll::-webkit-scrollbar-track,
+html.vetraOverviewScroll::-webkit-scrollbar-track,
+body.vetraOverviewScroll::-webkit-scrollbar-track,
+html.arbixWaveScroll::-webkit-scrollbar-track,
+body.arbixWaveScroll::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.18) 0%, rgba(30, 41, 59, 0.3) 100%);
+  border-radius: 999px;
+}
+
+html.finDocOverviewScroll::-webkit-scrollbar-thumb,
+body.finDocOverviewScroll::-webkit-scrollbar-thumb,
+html.vetraOverviewScroll::-webkit-scrollbar-thumb,
+body.vetraOverviewScroll::-webkit-scrollbar-thumb,
+html.arbixWaveScroll::-webkit-scrollbar-thumb,
+body.arbixWaveScroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 2px solid rgba(15, 23, 42, 0.25);
+  background: linear-gradient(
+    180deg,
+    var(--overview-scroll-accent-start) 0%,
+    var(--overview-scroll-accent-end) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--overview-scroll-accent-end) 30%, transparent);
+}
+
+html.finDocOverviewScroll::-webkit-scrollbar-thumb:hover,
+body.finDocOverviewScroll::-webkit-scrollbar-thumb:hover,
+html.vetraOverviewScroll::-webkit-scrollbar-thumb:hover,
+body.vetraOverviewScroll::-webkit-scrollbar-thumb:hover,
+html.arbixWaveScroll::-webkit-scrollbar-thumb:hover,
+body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--overview-scroll-accent-start) 80%, white) 0%,
+    color-mix(in srgb, var(--overview-scroll-accent-end) 88%, white) 100%
+  );
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;

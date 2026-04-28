@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
 import { GithubMarkIcon } from '../onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
+import dualIcon from '../assets/Dual.svg'
+import heatVisionIcon from '../assets/heat vision.svg'
+import noiseKillerIcon from '../assets/noise killer.svg'
+import zeroFrictionIcon from '../assets/zero friction.svg'
 import { DualWaveAnimation } from './DualWaveAnimation'
 import { preloadImages } from './utils'
 import './arbixWave.css'
@@ -155,9 +159,13 @@ function getScoreScale(score) {
 }
 
 export function ArbixOverviewPage() {
+  const navigate = useNavigate()
   const rootRef = useRef(null)
   const dualWaveWrapperRef = useRef(null)
   const searchShellRef = useRef(null)
+  const unlockRef = useRef(null)
+  const unlockHandleRef = useRef(null)
+  const unlockFillRef = useRef(null)
   const navDragRef = useRef({
     active: false,
     pointerId: null,
@@ -294,6 +302,48 @@ export function ArbixOverviewPage() {
       }
     }
 
+    const introSection = root.querySelector('.arbixIntroSection')
+    if (introSection) {
+      gsap.set(introSection, {
+        '--intro-top-line-reveal': 0,
+        '--intro-bottom-line-reveal': 0,
+        '--intro-left-line-reveal': 0,
+        '--intro-right-line-reveal': 0,
+      })
+      const introLineReveal = gsap.to(introSection, {
+        '--intro-top-line-reveal': 1,
+        '--intro-bottom-line-reveal': 1,
+        '--intro-left-line-reveal': 1,
+        '--intro-right-line-reveal': 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: introSection,
+          start: 'center 75%',
+          end: 'center 40%',
+          scrub: 1.01,
+        },
+      })
+      parallaxTimelines.push(introLineReveal)
+    }
+
+    const glassCards = root.querySelectorAll('.arbixGlassDeck__card')
+    if (glassCards.length) {
+      gsap.set(glassCards, { y: 120, opacity: 0.2 })
+      const glassCardsReveal = gsap.to(glassCards, {
+        y: 0,
+        opacity: 1,
+        ease: 'none',
+        stagger: 0.06,
+        scrollTrigger: {
+          trigger: '.arbixGlassDeck',
+          start: 'top 88%',
+          end: 'top 56%',
+          scrub: 0.95,
+        },
+      })
+      parallaxTimelines.push(glassCardsReveal)
+    }
+
     const dualWaveWrapper = dualWaveWrapperRef.current
     if (dualWaveWrapper) {
       const waveImage = dualWaveWrapper.querySelector('.image-thumbnail-wrapper')
@@ -331,6 +381,91 @@ export function ArbixOverviewPage() {
       bodyEl.classList.remove('arbixWaveScroll')
     }
   }, [])
+
+  useEffect(() => {
+    const track = unlockRef.current
+    const handle = unlockHandleRef.current
+    const fill = unlockFillRef.current
+    if (!track || !handle || !fill) return undefined
+
+    const state = { progress: 0 }
+    let activePointerId = null
+    let dragStart = 0
+    let dragBase = 0
+    let maxProgress = 0
+    let unlocked = false
+
+    const computeMax = () => Math.max(0, track.clientWidth - handle.offsetWidth - 8)
+    const applyProgress = (next) => {
+      state.progress = Math.max(0, Math.min(next, maxProgress))
+      handle.style.transform = `translateX(${state.progress}px)`
+      fill.style.width = `${Math.max(0, state.progress + handle.offsetWidth * 0.5)}px`
+    }
+
+    const snapBack = () => {
+      gsap.to(state, {
+        progress: 0,
+        duration: 0.3,
+        ease: 'power2.out',
+        onUpdate: () => applyProgress(state.progress),
+      })
+    }
+
+    const onPointerDown = (event) => {
+      if (unlocked || (event.button !== 0 && event.pointerType !== 'touch')) return
+      maxProgress = computeMax()
+      activePointerId = event.pointerId
+      dragStart = event.clientX
+      dragBase = state.progress
+      handle.setPointerCapture(event.pointerId)
+      track.classList.add('arbixEndBlock__unlock--dragging')
+      event.preventDefault()
+    }
+
+    const onPointerMove = (event) => {
+      if (event.pointerId !== activePointerId || unlocked) return
+      applyProgress(dragBase + (event.clientX - dragStart))
+    }
+
+    const releasePointer = (event) => {
+      if (event.pointerId !== activePointerId) return
+      if (handle.hasPointerCapture(event.pointerId)) {
+        handle.releasePointerCapture(event.pointerId)
+      }
+      activePointerId = null
+      track.classList.remove('arbixEndBlock__unlock--dragging')
+
+      if (maxProgress > 0 && state.progress >= maxProgress * 0.95) {
+        unlocked = true
+        applyProgress(maxProgress)
+        track.classList.add('arbixEndBlock__unlock--done')
+        window.setTimeout(() => navigate('/ArbiX'), 120)
+      } else {
+        snapBack()
+      }
+    }
+
+    const onResize = () => {
+      maxProgress = computeMax()
+      applyProgress(state.progress)
+    }
+
+    maxProgress = computeMax()
+    applyProgress(0)
+    handle.addEventListener('pointerdown', onPointerDown)
+    handle.addEventListener('pointermove', onPointerMove)
+    handle.addEventListener('pointerup', releasePointer)
+    handle.addEventListener('pointercancel', releasePointer)
+    window.addEventListener('resize', onResize)
+
+    return () => {
+      handle.removeEventListener('pointerdown', onPointerDown)
+      handle.removeEventListener('pointermove', onPointerMove)
+      handle.removeEventListener('pointerup', releasePointer)
+      handle.removeEventListener('pointercancel', releasePointer)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [navigate])
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => {
@@ -479,19 +614,7 @@ export function ArbixOverviewPage() {
               </div>
             </section>
           </div>
-          <div className="osmo-credits">
-            <p className="osmo-credits__p">
-              Resource by{' '}
-              <a
-                target="_blank"
-                href="https://www.osmo.supply?utm_source=codepen&utm_medium=pen&utm_campaign=parallax-image-layers"
-                className="osmo-credits__p-a"
-                rel="noreferrer"
-              >
-                Osmo
-              </a>
-            </p>
-          </div>
+          
           <section className="arbixWhatIs" aria-label="What is ArbiX section">
             <p className="arbixWhatIs__eyebrow">See the spread. Seize the profit.</p>
             <h2 className="arbixWhatIs__title">
@@ -509,7 +632,9 @@ export function ArbixOverviewPage() {
             data-wave-speed="0.85"
             data-wave-amplitude="1.15"
           >
-            <p className="arbixWave__eyebrow">Arbitrage Intelligence</p>
+            <p className="arbixWave__eyebrow">Arbitrage Intelligence
+              <br />We Compare, You Trade
+            </p>
             <div className="wave-column wave-column-left">
               <div className="wave-column__region wave-column__region--left">China</div>
               {list.map(({ name, score }, idx) => (
@@ -539,6 +664,8 @@ export function ArbixOverviewPage() {
             Data as of 20/3/2026, for reference only.
           </p>
           <section className="arbixIntroSection" aria-label="Arbix intro section">
+            <span className="arbixIntroSection__edge arbixIntroSection__edge--left" aria-hidden="true" />
+            <span className="arbixIntroSection__edge arbixIntroSection__edge--right" aria-hidden="true" />
             <div className="arbixIntroSection__backdrop" aria-hidden="true" />
             <div className="arbixIntroSection__card">
               <div className="arbixIntroSection__copy">
@@ -554,7 +681,99 @@ export function ArbixOverviewPage() {
               </div>
             </div>
           </section>
-          <div className="spacer-bottom" />
+          <section className="arbixGlassDeck" aria-label="Arbix glass cards">
+            <article className="arbixGlassDeck__card">
+              <div className="arbixGlassDeck__cardInner">
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--front">
+                  <img className="arbixGlassDeck__icon" src={dualIcon} alt="" aria-hidden="true" />
+                  <span className="arbixGlassDeck__label">Dual-Market Radar</span>
+                </div>
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--back">
+                  <h3 className="arbixGlassDeck__backTitle">Dual-Market Radar</h3>
+                  <ul className="arbixGlassDeck__backList">
+                    <li>One keyword.</li>
+                    <li>Two markets.</li>
+                    <li>Zero blind spots.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+            <article className="arbixGlassDeck__card">
+              <div className="arbixGlassDeck__cardInner">
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--front">
+                  <img className="arbixGlassDeck__icon" src={noiseKillerIcon} alt="" aria-hidden="true" />
+                  <span className="arbixGlassDeck__label">Noise Killer</span>
+                </div>
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--back">
+                  <h3 className="arbixGlassDeck__backTitle">Noise Killer</h3>
+                  <ul className="arbixGlassDeck__backList">
+                    <li>Filters fakes.</li>
+                    <li>Blocks banned words.</li>
+                    <li>Removes outliers.</li>
+                    <li>You get clean data.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+            <article className="arbixGlassDeck__card">
+              <div className="arbixGlassDeck__cardInner">
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--front">
+                  <img className="arbixGlassDeck__icon" src={heatVisionIcon} alt="" aria-hidden="true" />
+                  <span className="arbixGlassDeck__label">Heat Vision</span>
+                </div>
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--back">
+                  <h3 className="arbixGlassDeck__backTitle">Heat Vision</h3>
+                  <ul className="arbixGlassDeck__backList">
+                    <li>AI reads sell-through speed.</li>
+                    <li>Tells you hot or not.</li>
+                    <li>Before you buy.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+            <article className="arbixGlassDeck__card">
+              <div className="arbixGlassDeck__cardInner">
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--front">
+                  <img className="arbixGlassDeck__icon" src={zeroFrictionIcon} alt="" aria-hidden="true" />
+                  <span className="arbixGlassDeck__label">Zero Friction</span>
+                </div>
+                <div className="arbixGlassDeck__face arbixGlassDeck__face--back">
+                  <h3 className="arbixGlassDeck__backTitle">Zero Friction</h3>
+                  <ul className="arbixGlassDeck__backList">
+                    <li>No login.</li>
+                    <li>No setup.</li>
+                    <li>Open the page.</li>
+                    <li>Read the table.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </section>
+          <section className="spacer-bottom arbixEndBlock" aria-label="End block">
+            <h2 className="arbixEndBlock__title">
+              <span>WHEN</span>
+              <span>WILL</span>
+              <span>WE</span>
+              <span className="arbixEndBlock__lastLine">
+                <span>MEET</span>
+                <span className="arbixEndBlock__mark">?</span>
+              </span>
+            </h2>
+            <span className="arbixEndBlock__launchTag">Launch in 
+              July</span>
+            <div ref={unlockRef} className="arbixEndBlock__unlock" aria-label="Slide to unlock">
+              <div ref={unlockFillRef} className="arbixEndBlock__unlockFill" aria-hidden="true" />
+              <span className="arbixEndBlock__unlockText">Slide to try Demo ArbiX</span>
+              <button
+                ref={unlockHandleRef}
+                type="button"
+                className="arbixEndBlock__unlockHandle"
+                aria-label="Drag to unlock and open ArbiX"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </section>
         </div>
       </main>
     </div>

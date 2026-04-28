@@ -47,8 +47,8 @@ export function ImageExpansionTypographyPage() {
     const prevScrollTrigger = globalThis.ScrollTrigger
     const prevFlip = globalThis.Flip
 
-    htmlEl.classList.add('js')
-    bodyEl.className = 'demo-1 loading'
+    htmlEl.classList.add('js', 'vetraOverviewScroll')
+    bodyEl.className = 'demo-1 loading vetraOverviewScroll'
 
     /* Codrops effect 脚本读 globalThis.gsap / ScrollTrigger / Flip */
     globalThis.gsap = gsap

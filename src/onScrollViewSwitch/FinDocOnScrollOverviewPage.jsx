@@ -133,6 +133,17 @@ export function FinDocOnScrollOverviewPage() {
   }, [])
 
   useEffect(() => {
+    const htmlEl = document.documentElement
+    const bodyEl = document.body
+    htmlEl.classList.add('finDocOverviewScroll')
+    bodyEl.classList.add('finDocOverviewScroll')
+    return () => {
+      htmlEl.classList.remove('finDocOverviewScroll')
+      bodyEl.classList.remove('finDocOverviewScroll')
+    }
+  }, [])
+
+  useEffect(() => {
     const surface = surfaceRef.current
     const main = mainRef.current
     const grid = gridRef.current
