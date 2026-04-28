@@ -13,6 +13,7 @@ import { preloadImages } from './utils'
 import './arbixWave.css'
 
 const MENU_RESTORE_DEMO_TO = '/menu?demo=1'
+const COPYRIGHT_TEXT = `© ${new Date().getFullYear()} EvenSStudio. All rights reserved.`
 const PARALLAX_ASCII_ART = String.raw`
                                                              ./czcczrI       <xXzczv1,-jczccunnxxxucu,
                                                            )zY:      xz\   xcf      +zc}           'vx
@@ -774,6 +775,9 @@ export function ArbixOverviewPage() {
               </button>
             </div>
           </section>
+          <footer className="siteCopyrightNote" aria-label="Copyright notice">
+            {COPYRIGHT_TEXT}
+          </footer>
         </div>
       </main>
     </div>

@@ -12,6 +12,7 @@ const FUNDOC_REPO_URL = 'https://github.com/ZhangBoyanEvens/Ws_FinDoc'
 const TYPEKIT_LINK_ID = 'typekit-onscroll-codrops'
 /** 顶栏入场后再挂 ScrollTrigger，避免与 xPercent 入场冲突 */
 const HEADER_SCROLL_SETUP_DELAY_MS = 1020
+const COPYRIGHT_TEXT = `© ${new Date().getFullYear()} EvenSStudio. All rights reserved.`
 
 function GridIcon() {
   return (
@@ -361,6 +362,9 @@ export function FinDocOnScrollOverviewPage() {
           <div className="grid" ref={gridRef} />
         </main>
       </div>
+      <footer className="siteCopyrightNote" aria-label="Copyright notice">
+        {COPYRIGHT_TEXT}
+      </footer>
     </div>
   )
 }

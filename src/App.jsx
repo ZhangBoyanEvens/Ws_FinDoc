@@ -22,6 +22,7 @@ import {
 } from './onScrollViewSwitch/FinDocOnScrollOverviewPage.jsx'
 import { ImageExpansionTypographyPage } from './imageExpansionTypography/ImageExpansionTypographyPage.jsx'
 import { ArbixOverviewPage } from './arbixWave/ArbixOverviewPage.jsx'
+import { HeroBayerCirclesPage } from './hero/HeroBayerCirclesPage.jsx'
 import './App.css'
 import './onScrollViewSwitch/ersaLink.css'
 
@@ -96,6 +97,7 @@ const MENU_ITEMS = [
 const MENU_DEMO_QUERY = 'demo'
 const MENU_DEMO_QUERY_VALUE = '1'
 const MENU_RESTORE_DEMO_TO = `/menu?${MENU_DEMO_QUERY}=${MENU_DEMO_QUERY_VALUE}`
+const COPYRIGHT_TEXT = `© ${new Date().getFullYear()} EvenSStudio. All rights reserved.`
 
 function readDemoParamFromWindow() {
   if (typeof window === 'undefined') return false
@@ -310,6 +312,9 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
         >
           <h1>Under maintenance</h1>
         </section>
+        <footer className="siteCopyrightNote" aria-label="Copyright notice">
+          {COPYRIGHT_TEXT}
+        </footer>
       </main>
     </div>
   )
@@ -947,6 +952,9 @@ function MenuPage() {
           />
         </svg>
       </div>
+      <footer className="siteCopyrightNote" aria-label="Copyright notice">
+        {COPYRIGHT_TEXT}
+      </footer>
     </main>
   )
 }
@@ -982,6 +990,9 @@ function DemoTitleOverviewPage({ title }) {
           aria-label={`${title} overview (placeholder)`}
         />
       </div>
+      <footer className="siteCopyrightNote" aria-label="Copyright notice">
+        {COPYRIGHT_TEXT}
+      </footer>
     </div>
   )
 }
@@ -1001,7 +1012,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/menu" replace />} />
+        <Route path="/" element={<Navigate to="/HERO" replace />} />
+        <Route path="/HERO" element={<HeroBayerCirclesPage />} />
         <Route path="/menu" element={<MenuPage />} />
         {MENU_ITEMS.map((item) => (
           <Route
