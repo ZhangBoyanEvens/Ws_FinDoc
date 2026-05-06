@@ -241,7 +241,7 @@ export function HeroBayerCirclesPage() {
     <main className="heroBayerPage">
       <div ref={bgRef} className="heroBayerPage__bg" />
       <h1 className="heroBayerPage__label">Evenstudio</h1>
-      <Link to="/menu" className="heroBayerPage__startBtn" aria-label="Enter menu">
+      <Link to="/menu?demo=1" className="heroBayerPage__startBtn" aria-label="Enter menu">
         <span>Start</span>
         <span aria-hidden="true">↗</span>
       </Link>

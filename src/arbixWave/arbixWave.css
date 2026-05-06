@@ -55,6 +55,8 @@ body.arbixWaveScroll #root {
   align-items: center;
   padding: clamp(1.2rem, 3vw, 2.6rem);
   box-sizing: border-box;
+  container-type: inline-size;
+  container-name: arbix-end;
 }
 
 .arbixWavePage .arbixEndBlock::before {
@@ -181,6 +183,42 @@ body.arbixWaveScroll #root {
 
 .arbixWavePage .arbixEndBlock__unlock--done .arbixEndBlock__unlockText {
   color: rgba(186, 230, 253, 0.98);
+}
+
+/* 窄容器 / 装不下：滑动条在标题正下方流式排布，宽度自适应 */
+@container arbix-end (max-width: 56.25rem) {
+  .arbixWavePage .arbixEndBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: clamp(0.65rem, 2.8cqw, 1.35rem);
+  }
+
+  .arbixWavePage .arbixEndBlock__unlock {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: min(36rem, 100%);
+    height: clamp(3rem, 12cqw, 4.1rem);
+    align-self: stretch;
+  }
+
+  .arbixWavePage .arbixEndBlock__unlockHandle {
+    width: calc(clamp(3rem, 12cqw, 4.1rem) - 8px);
+    height: calc(clamp(3rem, 12cqw, 4.1rem) - 8px);
+  }
+
+  .arbixWavePage .arbixEndBlock__launchTag {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    align-self: flex-start;
+    margin-top: 0;
+    text-align: left;
+  }
 }
 
 .arbixWaveNav {
@@ -1092,8 +1130,38 @@ body.arbixWaveScroll #root {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* 无 container query 支持时：与 @container 52rem 同逻辑 */
+  .arbixWavePage .arbixEndBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: clamp(0.65rem, 2.8vw, 1.35rem);
+  }
+
   .arbixWavePage .arbixEndBlock__unlock {
-    width: min(92vw, 30rem);
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: min(36rem, 100%);
+    height: clamp(3rem, 12vw, 4.1rem);
+    align-self: stretch;
+  }
+
+  .arbixWavePage .arbixEndBlock__unlockHandle {
+    width: calc(clamp(3rem, 12vw, 4.1rem) - 8px);
+    height: calc(clamp(3rem, 12vw, 4.1rem) - 8px);
+  }
+
+  .arbixWavePage .arbixEndBlock__launchTag {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    align-self: flex-start;
+    margin-top: 0;
+    text-align: left;
   }
 }
 

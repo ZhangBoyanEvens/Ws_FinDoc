@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap');
 /* Shiny CTA — CSS @property and the New Style (https://ryanmulligan.dev/blog/css-property-new-style/) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap');
 
 @font-face {
   font-family: 'Sekuya';
@@ -216,18 +217,18 @@ body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
 
 .heroBayerPage__startBtn {
   position: absolute;
-  right: clamp(3rem, 8vw, 5.2rem);
+  left: clamp(3rem, 8vw, 5.2rem);
   bottom: clamp(3rem, 8vw, 5.2rem);
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   padding: 0.82rem 1.28rem 0.8rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.48);
-  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.66);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 1);
   text-decoration: none;
   font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
   font-size: 1.04rem;
@@ -238,8 +239,8 @@ body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
 
 .heroBayerPage__startBtn:hover {
   transform: translateY(-1px);
-  background: rgba(0, 0, 0, 0.42);
-  border-color: rgba(85, 255, 167, 0.72);
+  background: rgba(0, 0, 0, 0.82);
+  border-color: rgba(85, 255, 167, 0.95);
 }
 
 .heroBayerPage__pager {
@@ -698,6 +699,640 @@ body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
     0 16px 44px rgba(21, 128, 61, 0.38);
 }
 
+.finDocDashPlaceholder {
+  width: min(1200px, 100%);
+  height: clamp(24rem, 68vh, 46rem);
+  display: grid;
+  grid-template-columns: 25% 75%;
+  gap: clamp(0.75rem, 1.8vw, 1.2rem);
+}
+
+.finDocDashPlaceholder__right {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.45rem, 1.1vw, 0.78rem);
+  min-height: 0;
+  min-width: 0;
+}
+
+.finDocDashPlaceholder__mainShell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  gap: clamp(0.55rem, 1.2vw, 0.85rem);
+  align-items: stretch;
+}
+
+.finDocDashPlaceholder__main {
+  border: 2px solid rgba(34, 197, 94, 0.82);
+  border-radius: 0.85rem;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(187, 247, 208, 0.24);
+}
+
+.finDocDashPlaceholder__left {
+  min-height: inherit;
+  display: grid;
+  place-items: center;
+  border-radius: 0.85rem;
+}
+
+.finDocStageRail {
+  position: relative;
+  min-height: clamp(21rem, 58vh, 32rem);
+  width: min(13rem, 100%);
+  padding: 0.75rem 0;
+  display: grid;
+  align-content: space-between;
+  justify-items: start;
+}
+
+.finDocStageRail__line {
+  position: absolute;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  left: 0.58rem;
+  width: 3px;
+  background: rgba(22, 163, 74, 0.62);
+  border-radius: 999px;
+}
+
+.finDocStageRail__activeArrow {
+  position: absolute;
+  left: -1.22rem;
+  top: 0;
+  width: 0;
+  border-top: 0.48rem solid transparent;
+  border-bottom: 0.48rem solid transparent;
+  border-left: 0.74rem solid rgba(22, 163, 74, 0.96);
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.34));
+  transform: translateY(-50%);
+  cursor: ns-resize;
+  pointer-events: auto;
+  touch-action: none;
+  transition:
+    top 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    border-left-color 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.finDocStageRail__activeArrow.is-dragging {
+  transition: opacity 0.22s ease;
+}
+
+.finDocStageRail__item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.78rem;
+  border: none;
+  background: transparent;
+  padding: 0.44rem 0.62rem 0.44rem 0.28rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.finDocStageRail__dot {
+  width: 1.08rem;
+  height: 1.08rem;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 2px rgba(22, 163, 74, 0.82),
+    0 0 12px rgba(34, 197, 94, 0.28);
+}
+
+.finDocStageRail__label {
+  font-family: 'Jaro', 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(1.2rem, 1.7vw, 1.56rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.82);
+}
+
+.finDocStageRail__item:hover .finDocStageRail__label,
+.finDocStageRail__item.is-active .finDocStageRail__label {
+  color: rgba(21, 128, 61, 0.95);
+}
+
+.finDocStageRail__item:hover .finDocStageRail__dot,
+.finDocStageRail__item.is-active .finDocStageRail__dot {
+  box-shadow:
+    0 0 0 2px rgba(22, 163, 74, 1),
+    0 0 16px rgba(34, 197, 94, 0.44);
+}
+
+.finDocStageRail__item:focus-visible {
+  outline: 2px solid rgba(22, 163, 74, 0.8);
+  outline-offset: 4px;
+  border-radius: 0.35rem;
+}
+
+.finDocDashPlaceholder__main {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.finDocStageViewport {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  overflow: hidden;
+}
+
+.finDocStageTrack {
+  height: 100%;
+  transition: transform 0.56s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.finDocStagePanel {
+  position: relative;
+  height: 100%;
+  min-height: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding:
+    clamp(1.2rem, 2.4vw, 1.8rem)
+    clamp(1rem, 2.4vw, 1.6rem)
+    clamp(3.2rem, 6.4vw, 4.2rem);
+}
+
+/* Outcome：底部与其它 Stage 一致贴底；标题已移出绿框 */
+.finDocStagePanel--outcome {
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: clamp(1.2rem, 2.4vw, 1.8rem);
+  padding-bottom: clamp(3.2rem, 6.4vw, 4.2rem);
+  padding-left: clamp(1rem, 2.4vw, 1.6rem);
+  padding-right: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.finDocStageHeadingWrap {
+  position: relative;
+  margin: 0;
+  padding: 0 0.12rem;
+  min-height: 1.35em;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(1.24rem, 2vw, 1.85rem);
+  font-weight: 100;
+  letter-spacing: 0.04em;
+  color: rgba(21, 128, 61, 0.9);
+  line-height: 1.25;
+}
+
+.finDocStageHeading__layer {
+  display: block;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.finDocStageHeading__layer--static {
+  position: relative;
+}
+
+.finDocStageHeading__layer--exit,
+.finDocStageHeading__layer--enter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.finDocStageHeading__layer--exit {
+  animation: finDocStageHeadingExit 0.4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+.finDocStageHeading__layer--enter {
+  animation: finDocStageHeadingEnter 0.4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+@keyframes finDocStageHeadingExit {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(32%);
+    opacity: 0;
+  }
+}
+
+@keyframes finDocStageHeadingEnter {
+  from {
+    transform: translateX(-32%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.finDocOutcomeDownload {
+  position: relative;
+  align-self: flex-end;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.48rem;
+  margin: 0;
+  padding: 0.45rem 0.72rem;
+  border: 1px solid rgba(22, 163, 74, 0.42);
+  border-radius: 0.55rem;
+  background: #ffffff;
+  color: rgba(21, 128, 61, 0.94);
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.82rem, 1vw, 0.92rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(22, 163, 74, 0.1);
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.finDocOutcomeDownload:hover {
+  background: rgba(240, 253, 244, 0.95);
+  border-color: rgba(22, 163, 74, 0.65);
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.14);
+}
+
+.finDocOutcomeDownload:focus-visible {
+  outline: 2px solid rgba(22, 163, 74, 0.75);
+  outline-offset: 3px;
+}
+
+.finDocOutcomeDownload__icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.finDocOutcomeDownload__label {
+  text-transform: lowercase;
+}
+
+.finDocStagePanel > h1 {
+  margin: 0;
+  max-width: min(36rem, 92%);
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1.5rem, 3.2vw, 2.5rem);
+  border-radius: 0.95rem;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 55%, #22c55e 100%);
+  color: #f0fdf4;
+  font-family: 'Jaro', 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(2.25rem, 5.6vw, 4.2rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-align: center;
+  box-shadow:
+    0 0 0 1px rgba(220, 252, 231, 0.38),
+    0 16px 44px rgba(21, 128, 61, 0.38);
+}
+
+.finDocUploadCard {
+  width: min(42rem, 92%);
+  max-height: 100%;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.finDocUploadCard__dropzone {
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  padding: clamp(1.35rem, 2.6vw, 1.9rem);
+  border: 1.5px dashed rgba(22, 163, 74, 0.52);
+  border-radius: 1rem;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.05),
+    inset 0 0 0 1px rgba(22, 163, 74, 0.12);
+}
+
+.finDocUploadCard__dropzone:hover {
+  border-color: rgba(22, 163, 74, 0.8);
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.08),
+    inset 0 0 0 1px rgba(22, 163, 74, 0.2);
+}
+
+.finDocUploadCard__input {
+  display: none;
+}
+
+.finDocUploadCard__headline {
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(1.04rem, 1.45vw, 1.22rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(20, 83, 45, 0.92);
+}
+
+.finDocUploadCard__sub {
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.82rem, 1.02vw, 0.92rem);
+  color: rgba(20, 83, 45, 0.58);
+}
+
+.finDocUploadCard__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.finDocUploadCard__list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.62rem 0.82rem;
+  border-radius: 0.78rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: #ffffff;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.82rem, 1.03vw, 0.92rem);
+  color: rgba(30, 41, 59, 0.9);
+}
+
+.finDocUploadCard__list li span:last-child {
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(22, 163, 74, 0.3);
+  color: rgba(21, 128, 61, 0.9);
+  font-size: 0.78em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.finDocUploadCard__fields {
+  display: grid;
+  gap: 0.52rem;
+}
+
+.finDocUploadCard__field {
+  display: grid;
+  gap: 0.32rem;
+}
+
+.finDocUploadCard__field > span {
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.78rem, 1.05vw, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(21, 128, 61, 0.88);
+}
+
+.finDocUploadCard__field > input {
+  width: 100%;
+  border: 1px solid rgba(22, 163, 74, 0.35);
+  border-radius: 0.62rem;
+  background: #ffffff;
+  color: rgba(15, 23, 42, 0.92);
+  padding: 0.58rem 0.72rem;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.82rem, 1vw, 0.92rem);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.finDocUploadCard__field > input:focus {
+  border-color: rgba(22, 163, 74, 0.75);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+}
+
+.finDocSummaryCard {
+  width: min(42rem, 92%);
+  max-height: 100%;
+  margin-top: 0;
+  padding: clamp(0.4rem, 1.2vw, 0.8rem) clamp(0.2rem, 0.6vw, 0.5rem);
+  display: grid;
+  gap: 0.55rem;
+}
+
+.finDocSummaryCard__projectField {
+  display: grid;
+  gap: 0.32rem;
+  margin-bottom: 0.25rem;
+}
+
+.finDocSummaryCard__projectField > span {
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.78rem, 1.02vw, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(21, 128, 61, 0.88);
+}
+
+.finDocSummaryCard__projectField > input {
+  width: 100%;
+  border: 1px solid rgba(22, 163, 74, 0.35);
+  border-radius: 0.62rem;
+  background: #ffffff;
+  color: rgba(15, 23, 42, 0.92);
+  padding: 0.58rem 0.72rem;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.82rem, 1vw, 0.92rem);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.finDocSummaryCard__projectField > input:focus {
+  border-color: rgba(22, 163, 74, 0.75);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+}
+
+.finDocSummaryCard__list {
+  margin: 0;
+  display: grid;
+  gap: 0.48rem;
+}
+
+.finDocSummaryCard__list > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.64rem 0.72rem;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 0.74rem;
+  background: #ffffff;
+}
+
+.finDocSummaryCard__list dt {
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.75rem, 0.98vw, 0.86rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(22, 101, 52, 0.72);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.finDocSummaryCard__list dd {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.86rem, 1.08vw, 0.98rem);
+  color: rgba(15, 23, 42, 0.88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+.finDocOutcomeEditorBlock {
+  width: 48rem;
+  max-width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  transform: translateY(2.5rem);
+}
+
+.finDocEditorCard {
+  width: 48rem;
+  max-width: 100%;
+  height: 19.5rem;
+  flex-shrink: 0;
+  border: 1px solid rgba(22, 163, 74, 0.28);
+  border-radius: 0.92rem;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+.finDocEditorCard__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.58rem 0.68rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.26);
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.finDocEditorCard__toolbar > button {
+  border: 1px solid rgba(148, 163, 184, 0.36);
+  background: #ffffff;
+  color: rgba(30, 41, 59, 0.9);
+  border-radius: 0.48rem;
+  padding: 0.32rem 0.52rem;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.76rem, 0.98vw, 0.88rem);
+  cursor: pointer;
+}
+
+.finDocEditorCard__editor {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0.86rem 0.92rem;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.9rem, 1.08vw, 1rem);
+  line-height: 1.55;
+  color: rgba(15, 23, 42, 0.92);
+  background: #ffffff;
+  outline: none;
+  overflow-y: auto;
+}
+
+.finDocEditorCard__editor:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(100, 116, 139, 0.7);
+  pointer-events: none;
+}
+
+.finDocOutcomeProgress {
+  width: 100%;
+  padding: 0 0.12rem;
+}
+
+.finDocOutcomeProgress__track {
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(240, 253, 244, 0.95);
+  border: 2px solid rgba(22, 163, 74, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+    0 4px 14px rgba(22, 163, 74, 0.18);
+  overflow: hidden;
+}
+
+.finDocOutcomeProgress__fill {
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #16a34a 0%, #22c55e 45%, #4ade80 100%);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.55);
+}
+
+.finDocOutcomeProgress--active .finDocOutcomeProgress__fill {
+  animation: finDocOutcomeProgressFill 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes finDocOutcomeProgressFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.finDocStagePanel__actions {
+  position: absolute;
+  right: clamp(1rem, 2.4vw, 1.6rem);
+  bottom: clamp(1rem, 2.4vw, 1.6rem);
+  display: inline-flex;
+  gap: 0.65rem;
+}
+
+.finDocStagePanel__btn {
+  border: 1px solid rgba(22, 163, 74, 0.75);
+  background: #ffffff;
+  color: rgba(21, 128, 61, 0.95);
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  font-family: 'Jaro', 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: clamp(0.92rem, 1.2vw, 1.08rem);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.finDocStagePanel__btn:hover:not(:disabled) {
+  background: rgba(22, 163, 74, 0.12);
+  transform: translateY(-1px);
+}
+
+.finDocStagePanel__btn:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
 .finDocMaintenance--vetra > h1 {
   background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
   color: #eff6ff;
@@ -740,10 +1375,22 @@ body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
   --menu-demo-landscape-slide-ease: cubic-bezier(0.73, 0, 0.26, 1);
   --menu-demo-landscape-top: clamp(28vh, 12vh + 12rem, 42vh);
   /* 竖直仅跟 Vetra 标题中线（JS 写 --menu-demo-landscape-top），此处不设额外下移 */
-  --menu-demo-landscape-nudge-y: 0px;
-  /* 竖线锚点（略左于右半区中线 75vw） */
-  --menu-demo-landscape-left: 71vw;
+  --menu-demo-landscape-nudge-y: 0rem;
   --menu-pad: clamp(0.75rem, 2.8vw, 1.75rem);
+  /* 图组右缘与视口右缘间距 */
+  --menu-demo-landscape-inset-right: var(--menu-pad);
+  /* 图组左缘不得越过视口竖直中线：与中线保留相对间距 */
+  --menu-demo-landscape-midline-pad: clamp(0.5rem, 1.6vw, 1.2rem);
+  --menu-demo-landscape-max-height: min(63vh, 31.5rem);
+  /* 宽：原 cap、中线以右可用宽、且不超过 max-height 下的 4:3 宽上限 */
+  --menu-demo-landscape-width: min(
+    76.5vw,
+    40.5rem,
+    max(0px, calc(50vw - var(--menu-demo-landscape-inset-right) - var(--menu-demo-landscape-midline-pad))),
+    calc(var(--menu-demo-landscape-max-height) * 4 / 3)
+  );
+  /* Work：整块移到视口右外（右缘本已在 inset 处，再平移 inset + 自身宽 + 少量余量） */
+  --menu-demo-landscape-hide-dx: calc(var(--menu-demo-landscape-inset-right) + 100% + 0.5rem);
   --color-text: #e5e7eb;
   --color-bg: #000000;
   --color-link: #f87171;
@@ -789,27 +1436,29 @@ body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
   transform: translateX(-25vw);
 }
 
-/* Demo 右侧风景占位：与 title 同速滑入；水平由 --menu-demo-landscape-left，竖直由 JS 写 --menu-demo-landscape-top；内层 track 纵向切图 */
+/* Demo 右侧风景：右缘 inset；左缘 ≤ 50vw − 中线留白；竖直由 JS 写 --menu-demo-landscape-top */
 .menuShell .menuDemoLandscape {
   position: fixed;
-  left: var(--menu-demo-landscape-left);
+  right: var(--menu-demo-landscape-inset-right);
+  left: auto;
   top: var(--menu-demo-landscape-top);
-  width: min(76.5vw, 40.5rem);
-  max-height: min(63vh, 31.5rem);
+  width: var(--menu-demo-landscape-width);
+  max-height: var(--menu-demo-landscape-max-height);
   height: auto;
-  aspect-ratio: 4/3;
+  aspect-ratio: 4 / 3;
+  box-sizing: border-box;
   overflow: hidden;
   border-radius: 0.65rem;
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.12),
-    0 16px 48px rgba(0, 0, 0, 0.45);
+    0 1rem 3rem rgba(0, 0, 0, 0.45);
   z-index: 7;
   pointer-events: none;
   transition: transform var(--menu-demo-motion-dur) var(--menu-demo-motion-ease);
   transition-delay: 0s;
-  /* Work：translateX = (100vw - left) + 50% 自身宽，中心落到 100vw + 半宽，整图在视口右外 */
+  /* Work：整组藏到视口右侧外 */
   transform: translate(
-      calc(100vw - var(--menu-demo-landscape-left) + 50%),
+      var(--menu-demo-landscape-hide-dx),
       calc(-50% + var(--menu-demo-landscape-nudge-y))
     );
 }
@@ -928,22 +1577,22 @@ body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
   height: auto;
   object-fit: contain;
   object-position: center;
-  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.38));
+  filter: drop-shadow(0 0.625rem 1.75rem rgba(0, 0, 0, 0.38));
 }
 
 .menuShell.menuShell--demoShift .menuDemoLandscape {
-  transform: translate(-50%, calc(-50% + var(--menu-demo-landscape-nudge-y)));
+  transform: translateY(calc(-50% + var(--menu-demo-landscape-nudge-y)));
 }
 
 @media (prefers-reduced-motion: reduce) {
   .menuShell .menuDemoLandscape {
     transition: none;
-    transform: translate(-50%, calc(-50% + var(--menu-demo-landscape-nudge-y)));
+    transform: translateY(calc(-50% + var(--menu-demo-landscape-nudge-y)));
   }
 
   .menuShell:not(.menuShell--demoShift) .menuDemoLandscape {
     transform: translate(
-      calc(100vw - var(--menu-demo-landscape-left) + 50%),
+      var(--menu-demo-landscape-hide-dx),
       calc(-50% + var(--menu-demo-landscape-nudge-y))
     );
   }

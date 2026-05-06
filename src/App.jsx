@@ -98,6 +98,19 @@ const MENU_DEMO_QUERY = 'demo'
 const MENU_DEMO_QUERY_VALUE = '1'
 const MENU_RESTORE_DEMO_TO = `/menu?${MENU_DEMO_QUERY}=${MENU_DEMO_QUERY_VALUE}`
 const COPYRIGHT_TEXT = `© ${new Date().getFullYear()} EvenSStudio. All rights reserved.`
+const FINDOC_STAGE_ITEMS = [
+  { id: 1, title: 'Upload Project File' },
+  { id: 2, title: 'Project Template Settings' },
+  { id: 3, title: 'Detail Summary' },
+  { id: 4, title: 'Outcome' },
+]
+
+const FINDOC_OUTCOME_WELCOME_TEXT = 'Welcome To FinDoc!'
+const FINDOC_HEADING_TRANSITION_MS = 400
+
+function findocStageTitle(stageId) {
+  return FINDOC_STAGE_ITEMS.find((s) => s.id === stageId)?.title ?? ''
+}
 
 function readDemoParamFromWindow() {
   if (typeof window === 'undefined') return false
@@ -106,6 +119,16 @@ function readDemoParamFromWindow() {
   } catch {
     return false
   }
+}
+
+/** 与标题中线对齐；用 vh 写入，避免 px，resize 时由 ResizeObserver 再同步 */
+function syncMenuDemoLandscapeTop(shell, titleEl) {
+  if (!shell || !titleEl) return
+  const r = titleEl.getBoundingClientRect()
+  const ih = window.innerHeight
+  if (ih <= 0) return
+  const centerY = r.top + r.height / 2
+  shell.style.setProperty('--menu-demo-landscape-top', `${(centerY / ih) * 100}vh`)
 }
 
 function flushCurtainPath(pathEl, ySide, yPeak) {
@@ -159,6 +182,74 @@ function playDemoCurtainOut(pathEl, onComplete) {
 
 function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
   const canvasRef = useRef(null)
+  const stageFourEditorRef = useRef(null)
+  const [activeStage, setActiveStage] = useState(1)
+  const [outcomeProgressKey, setOutcomeProgressKey] = useState(0)
+  const [stageInputState, setStageInputState] = useState({
+    projectNamed: '',
+    projectFile: '',
+    templateFile: '',
+    referenceLink: '',
+    view: '',
+  })
+  const wheelLockRef = useRef(false)
+  const stageItemRefs = useRef([])
+  const arrowDragRef = useRef({
+    active: false,
+    pointerId: null,
+    startY: 0,
+    startArrowTop: 0,
+    centers: [],
+  })
+  const [isArrowDragging, setIsArrowDragging] = useState(false)
+  const [stageFrameStyle, setStageFrameStyle] = useState({
+    top: 0,
+    height: 0,
+    opacity: 0,
+    arrowTop: 0,
+  })
+  const settledStageRef = useRef(activeStage)
+  const headingTransitionRef = useRef(null)
+  const [headingPair, setHeadingPair] = useState(null)
+  const [idleHeadingStageId, setIdleHeadingStageId] = useState(activeStage)
+
+  useEffect(() => {
+    if (themeClass !== 'theme-findoc') return undefined
+
+    if (headingTransitionRef.current && headingTransitionRef.current.in === activeStage) {
+      return undefined
+    }
+
+    if (activeStage === settledStageRef.current && !headingTransitionRef.current) {
+      return undefined
+    }
+
+    if (headingTransitionRef.current && headingTransitionRef.current.in !== activeStage) {
+      settledStageRef.current = headingTransitionRef.current.in
+    }
+
+    const out = settledStageRef.current
+    const inn = activeStage
+
+    if (out === inn) {
+      headingTransitionRef.current = null
+      setHeadingPair(null)
+      setIdleHeadingStageId(inn)
+      return undefined
+    }
+
+    headingTransitionRef.current = { out, in: inn }
+    setHeadingPair({ out, in: inn })
+
+    const t = window.setTimeout(() => {
+      settledStageRef.current = inn
+      headingTransitionRef.current = null
+      setHeadingPair(null)
+      setIdleHeadingStageId(inn)
+    }, FINDOC_HEADING_TRANSITION_MS)
+
+    return () => window.clearTimeout(t)
+  }, [activeStage, themeClass])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -267,6 +358,166 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
     }
   }, [trailColor])
 
+  useEffect(() => {
+    if (themeClass !== 'theme-findoc') return
+
+    const syncActiveFrame = () => {
+      const target = stageItemRefs.current[activeStage - 1]
+      if (!target) return
+      setStageFrameStyle({
+        top: target.offsetTop,
+        height: target.offsetHeight,
+        opacity: 1,
+        arrowTop: target.offsetTop + target.offsetHeight * 0.5,
+      })
+    }
+
+    syncActiveFrame()
+    window.addEventListener('resize', syncActiveFrame)
+    return () => window.removeEventListener('resize', syncActiveFrame)
+  }, [activeStage, themeClass])
+
+  useEffect(() => {
+    if (themeClass !== 'theme-findoc' || activeStage !== 4) return
+    setOutcomeProgressKey((k) => k + 1)
+  }, [activeStage, themeClass])
+
+  useEffect(() => {
+    if (themeClass !== 'theme-findoc' || activeStage !== 4) return undefined
+
+    let cancelled = false
+    let charTimeoutId = 0
+
+    const startDelayId = window.setTimeout(() => {
+      const el = stageFourEditorRef.current
+      if (!el || cancelled) return
+      el.textContent = ''
+      let i = 0
+      const typeNext = () => {
+        if (cancelled || !stageFourEditorRef.current) return
+        if (i >= FINDOC_OUTCOME_WELCOME_TEXT.length) return
+        el.textContent += FINDOC_OUTCOME_WELCOME_TEXT[i]
+        i += 1
+        charTimeoutId = window.setTimeout(typeNext, 110)
+      }
+      typeNext()
+    }, 620)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(startDelayId)
+      window.clearTimeout(charTimeoutId)
+    }
+  }, [activeStage, themeClass])
+
+  const handleStageWheel = (event) => {
+    if (themeClass !== 'theme-findoc') return
+    event.preventDefault()
+    if (wheelLockRef.current) return
+
+    const direction = Math.sign(event.deltaY)
+    if (direction === 0) return
+
+    wheelLockRef.current = true
+    setActiveStage((prev) => {
+      const next = prev + direction
+      if (next < 1) return 1
+      if (next > 4) return 4
+      return next
+    })
+
+    window.setTimeout(() => {
+      wheelLockRef.current = false
+    }, 430)
+  }
+
+  const handleStageInputChange = (key) => (event) => {
+    const value = event?.target?.value ?? ''
+    setStageInputState((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const runEditorCommand = (command) => () => {
+    const editor = stageFourEditorRef.current
+    if (!editor) return
+    editor.focus()
+    document.execCommand(command, false)
+  }
+
+  const handleStageFileChange = (key) => (event) => {
+    const fileName = event?.target?.files?.[0]?.name ?? ''
+    setStageInputState((prev) => ({ ...prev, [key]: fileName }))
+  }
+
+  const handleArrowPointerDown = (event) => {
+    if (themeClass !== 'theme-findoc') return
+    if (event.button !== 0 && event.pointerType !== 'touch') return
+
+    const centers = stageItemRefs.current
+      .filter(Boolean)
+      .map((item) => item.offsetTop + item.offsetHeight * 0.5)
+    if (!centers.length) return
+
+    const currentArrowTop = stageFrameStyle.arrowTop || centers[Math.max(0, activeStage - 1)]
+    arrowDragRef.current = {
+      active: true,
+      pointerId: event.pointerId,
+      startY: event.clientY,
+      startArrowTop: currentArrowTop,
+      centers,
+    }
+    setIsArrowDragging(true)
+    event.currentTarget.setPointerCapture(event.pointerId)
+    event.preventDefault()
+  }
+
+  const handleArrowPointerMove = (event) => {
+    const drag = arrowDragRef.current
+    if (!drag.active || event.pointerId !== drag.pointerId) return
+
+    const min = drag.centers[0]
+    const max = drag.centers[drag.centers.length - 1]
+    const nextArrowTop = Math.max(min, Math.min(max, drag.startArrowTop + (event.clientY - drag.startY)))
+    setStageFrameStyle((prev) => ({
+      ...prev,
+      arrowTop: nextArrowTop,
+      opacity: 1,
+    }))
+  }
+
+  const handleArrowPointerUp = (event) => {
+    const drag = arrowDragRef.current
+    if (!drag.active || event.pointerId !== drag.pointerId) return
+
+    const railArrowTop = stageFrameStyle.arrowTop || drag.startArrowTop
+    let nearestIdx = 0
+    let nearestDistance = Number.POSITIVE_INFINITY
+    drag.centers.forEach((center, idx) => {
+      const distance = Math.abs(center - railArrowTop)
+      if (distance < nearestDistance) {
+        nearestDistance = distance
+        nearestIdx = idx
+      }
+    })
+
+    const nearestStage = nearestIdx + 1
+    const target = stageItemRefs.current[nearestIdx]
+    setActiveStage(nearestStage)
+    setStageFrameStyle((prev) => ({
+      ...prev,
+      top: target ? target.offsetTop : prev.top,
+      height: target ? target.offsetHeight : prev.height,
+      arrowTop: drag.centers[nearestIdx],
+      opacity: 1,
+    }))
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    arrowDragRef.current.active = false
+    arrowDragRef.current.pointerId = null
+    setIsArrowDragging(false)
+  }
+
   return (
     <div className={`finDocShell ${themeClass}`}>
       <canvas ref={canvasRef} className="finCursorCanvas" aria-hidden="true" />
@@ -310,7 +561,274 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
           aria-live="polite"
           aria-label={`${brandName} maintenance notice`}
         >
-          <h1>Under maintenance</h1>
+          {themeClass === 'theme-findoc' ? (
+            <div className="finDocDashPlaceholder" aria-label="FinDoc dashboard placeholder">
+              <aside className="finDocDashPlaceholder__left" aria-label="Progress stages">
+                <div className="finDocStageRail" role="list" aria-label="Dashboard stages">
+                  <span className="finDocStageRail__line" aria-hidden="true" />
+                  <span
+                    className={`finDocStageRail__activeArrow ${isArrowDragging ? 'is-dragging' : ''}`}
+                    aria-hidden="true"
+                    style={{
+                      top: `${stageFrameStyle.arrowTop || stageFrameStyle.top + stageFrameStyle.height * 0.5}px`,
+                      opacity: stageFrameStyle.opacity,
+                    }}
+                    onPointerDown={handleArrowPointerDown}
+                    onPointerMove={handleArrowPointerMove}
+                    onPointerUp={handleArrowPointerUp}
+                    onPointerCancel={handleArrowPointerUp}
+                  />
+                  {FINDOC_STAGE_ITEMS.map((stage) => (
+                    <button
+                      key={stage.id}
+                      ref={(el) => {
+                        stageItemRefs.current[stage.id - 1] = el
+                      }}
+                      type="button"
+                      className={`finDocStageRail__item ${activeStage === stage.id ? 'is-active' : ''}`}
+                      role="listitem"
+                      onClick={() => setActiveStage(stage.id)}
+                      aria-label={`Select stage ${stage.id}`}
+                      aria-pressed={activeStage === stage.id}
+                    >
+                      <span className="finDocStageRail__dot" aria-hidden="true" />
+                      <span className="finDocStageRail__label">Stage {stage.id}</span>
+                    </button>
+                  ))}
+                </div>
+              </aside>
+              <div className="finDocDashPlaceholder__right">
+                <h2
+                  className="finDocStageHeadingWrap"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  {headingPair ? (
+                    <>
+                      <span
+                        className="finDocStageHeading__layer finDocStageHeading__layer--exit"
+                        key={`heading-out-${headingPair.out}`}
+                        aria-hidden="true"
+                      >
+                        {findocStageTitle(headingPair.out)}
+                      </span>
+                      <span
+                        className="finDocStageHeading__layer finDocStageHeading__layer--enter"
+                        key={`heading-in-${headingPair.in}`}
+                      >
+                        {findocStageTitle(headingPair.in)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="finDocStageHeading__layer finDocStageHeading__layer--static">
+                      {findocStageTitle(idleHeadingStageId)}
+                    </span>
+                  )}
+                </h2>
+                <div className="finDocDashPlaceholder__mainShell">
+                  <div className="finDocDashPlaceholder__main">
+                    <div className="finDocStageViewport" aria-live="polite" onWheel={handleStageWheel}>
+                    <div
+                      className="finDocStageTrack"
+                      style={{ transform: `translateY(-${(activeStage - 1) * 100}%)` }}
+                    >
+                    {FINDOC_STAGE_ITEMS.map((stage) => (
+                      <article
+                        key={stage.id}
+                        className={`finDocStagePanel${stage.id === 4 ? ' finDocStagePanel--outcome' : ''}`}
+                        aria-label={`Stage ${stage.id} panel`}
+                      >
+                        {stage.id === 1 ? (
+                          <div className="finDocUploadCard" aria-label="Project file upload panel">
+                            <label
+                              className="finDocUploadCard__dropzone"
+                              htmlFor={`findoc-project-upload-${stage.id}`}
+                            >
+                              <input
+                                id={`findoc-project-upload-${stage.id}`}
+                                type="file"
+                                className="finDocUploadCard__input"
+                                onChange={handleStageFileChange('projectFile')}
+                              />
+                              <span className="finDocUploadCard__headline">Drop your project file here</span>
+                              <span className="finDocUploadCard__sub">or click to browse</span>
+                            </label>
+                            <ul className="finDocUploadCard__list" aria-label="Uploaded files list">
+                              <li>
+                                <span>template-q2.xlsx</span>
+                                <span>Ready</span>
+                              </li>
+                              <li>
+                                <span>client-mapping.csv</span>
+                                <span>Ready</span>
+                              </li>
+                              <li>
+                                <span>notes.docx</span>
+                                <span>Pending</span>
+                              </li>
+                            </ul>
+                          </div>
+                        ) : stage.id === 2 ? (
+                          <div className="finDocUploadCard" aria-label="Project file upload panel">
+                            <label
+                              className="finDocUploadCard__dropzone"
+                              htmlFor={`findoc-project-upload-${stage.id}`}
+                            >
+                              <input
+                                id={`findoc-project-upload-${stage.id}`}
+                                type="file"
+                                className="finDocUploadCard__input"
+                                onChange={handleStageFileChange('templateFile')}
+                              />
+                              <span className="finDocUploadCard__headline">Drop your Template file here</span>
+                              <span className="finDocUploadCard__sub">or click to browse</span>
+                            </label>
+                            <div className="finDocUploadCard__fields" aria-label="Input fields">
+                              <label className="finDocUploadCard__field">
+                                <span>Reference Link</span>
+                                <input
+                                  type="text"
+                                  placeholder="Paste reference link..."
+                                  value={stageInputState.referenceLink}
+                                  onChange={handleStageInputChange('referenceLink')}
+                                />
+                              </label>
+                              <label className="finDocUploadCard__field">
+                                <span>View</span>
+                                <input
+                                  type="text"
+                                  placeholder="Type view name..."
+                                  value={stageInputState.view}
+                                  onChange={handleStageInputChange('view')}
+                                />
+                              </label>
+                            </div>
+                          </div>
+                        ) : stage.id === 3 ? (
+                          <section className="finDocSummaryCard" aria-label="Summary of user inputs">
+                            <label className="finDocSummaryCard__projectField">
+                              <span>Project Named</span>
+                              <input
+                                type="text"
+                                placeholder="Type project name..."
+                                value={stageInputState.projectNamed}
+                                onChange={handleStageInputChange('projectNamed')}
+                              />
+                            </label>
+                            <dl className="finDocSummaryCard__list">
+                              <div>
+                                <dt>Project File</dt>
+                                <dd>{stageInputState.projectFile || 'Not uploaded'}</dd>
+                              </div>
+                              <div>
+                                <dt>Template File</dt>
+                                <dd>{stageInputState.templateFile || 'Not uploaded'}</dd>
+                              </div>
+                              <div>
+                                <dt>Reference Link</dt>
+                                <dd>{stageInputState.referenceLink || 'Not provided'}</dd>
+                              </div>
+                              <div>
+                                <dt>View</dt>
+                                <dd>{stageInputState.view || 'Not provided'}</dd>
+                              </div>
+                            </dl>
+                          </section>
+                        ) : stage.id === 4 ? (
+                          <div className="finDocOutcomeEditorBlock">
+                            <section className="finDocEditorCard" aria-label="Text editor panel">
+                              <div className="finDocEditorCard__toolbar" aria-label="Editor toolbar">
+                                <button type="button" onClick={runEditorCommand('bold')}>B</button>
+                                <button type="button" onClick={runEditorCommand('italic')}>I</button>
+                                <button type="button" onClick={runEditorCommand('underline')}>U</button>
+                                <button type="button" onClick={runEditorCommand('insertUnorderedList')}>
+                                  • List
+                                </button>
+                                <button type="button" onClick={runEditorCommand('insertOrderedList')}>
+                                  1. List
+                                </button>
+                              </div>
+                              <div
+                                ref={stageFourEditorRef}
+                                className="finDocEditorCard__editor"
+                                contentEditable
+                                suppressContentEditableWarning
+                                role="textbox"
+                                aria-multiline="true"
+                                data-placeholder="Type your final notes here..."
+                              />
+                            </section>
+                            <div
+                              className={`finDocOutcomeProgress ${activeStage === 4 ? 'finDocOutcomeProgress--active' : ''}`}
+                              aria-hidden="true"
+                            >
+                              <div className="finDocOutcomeProgress__track">
+                                <div
+                                  key={outcomeProgressKey}
+                                  className="finDocOutcomeProgress__fill"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <h1>Stage {stage.id}</h1>
+                        )}
+                        {stage.id !== 4 ? (
+                          <div className="finDocStagePanel__actions" aria-label={`Stage ${stage.id} navigation`}>
+                            <button
+                              type="button"
+                              className="finDocStagePanel__btn"
+                              onClick={() => setActiveStage((prev) => Math.max(1, prev - 1))}
+                              disabled={stage.id === 1}
+                            >
+                              Previous
+                            </button>
+                            <button
+                              type="button"
+                              className="finDocStagePanel__btn"
+                              onClick={() => setActiveStage((prev) => Math.min(4, prev + 1))}
+                              disabled={stage.id === 4}
+                            >
+                              Next
+                            </button>
+                          </div>
+                        ) : null}
+                      </article>
+                    ))}
+                    </div>
+                  </div>
+                  </div>
+                  {activeStage === 4 ? (
+                    <button
+                      type="button"
+                      className="finDocOutcomeDownload"
+                      aria-label="Download"
+                    >
+                      <svg
+                        className="finDocOutcomeDownload__icon"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                      <span className="finDocOutcomeDownload__label">download</span>
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <h1>Under maintenance</h1>
+          )}
         </section>
         <footer className="siteCopyrightNote" aria-label="Copyright notice">
           {COPYRIGHT_TEXT}
@@ -452,11 +970,7 @@ function MenuPage() {
 
     Splitting({ target: root.querySelectorAll('[data-splitting]') })
 
-    const vt = vetraTitleRef.current
-    if (vt) {
-      const r = vt.getBoundingClientRect()
-      root.style.setProperty('--menu-demo-landscape-top', `${r.top + r.height / 2}px`)
-    }
+    syncMenuDemoLandscapeTop(root, vetraTitleRef.current)
 
     const menuLinks = root.querySelectorAll('.menu__item')
     const allLinks = root.querySelectorAll('a')
@@ -687,8 +1201,7 @@ function MenuPage() {
     if (!shell || !titleEl) return
 
     const syncLandscapeTop = () => {
-      const r = titleEl.getBoundingClientRect()
-      shell.style.setProperty('--menu-demo-landscape-top', `${r.top + r.height / 2}px`)
+      syncMenuDemoLandscapeTop(shell, titleEl)
     }
 
     syncLandscapeTop()

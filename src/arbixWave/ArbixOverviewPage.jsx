@@ -760,8 +760,6 @@ export function ArbixOverviewPage() {
                 <span className="arbixEndBlock__mark">?</span>
               </span>
             </h2>
-            <span className="arbixEndBlock__launchTag">Launch in 
-              July</span>
             <div ref={unlockRef} className="arbixEndBlock__unlock" aria-label="Slide to unlock">
               <div ref={unlockFillRef} className="arbixEndBlock__unlockFill" aria-hidden="true" />
               <span className="arbixEndBlock__unlockText">Slide to try Demo ArbiX</span>
@@ -774,6 +772,7 @@ export function ArbixOverviewPage() {
                 <span aria-hidden="true">→</span>
               </button>
             </div>
+            <span className="arbixEndBlock__launchTag">Launch in July</span>
           </section>
           <footer className="siteCopyrightNote" aria-label="Copyright notice">
             {COPYRIGHT_TEXT}
