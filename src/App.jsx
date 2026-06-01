@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import {
   BrowserRouter,
@@ -23,6 +23,10 @@ import {
 import { ImageExpansionTypographyPage } from './imageExpansionTypography/ImageExpansionTypographyPage.jsx'
 import { ArbixOverviewPage } from './arbixWave/ArbixOverviewPage.jsx'
 import { HeroBayerCirclesPage } from './hero/HeroBayerCirclesPage.jsx'
+import {
+  VETRA_COUNTRY_OPTIONS,
+  vetraRegionsForCountry,
+} from './vetra/countryRegionKb.js'
 import './App.css'
 import './onScrollViewSwitch/ersaLink.css'
 
@@ -107,6 +111,49 @@ const FINDOC_STAGE_ITEMS = [
 
 const FINDOC_OUTCOME_WELCOME_TEXT = 'Welcome To FinDoc!'
 const FINDOC_HEADING_TRANSITION_MS = 400
+
+/** Vetra 右栏 Company list 演示数据 */
+/** Simplified：每单位 0.5 min；Research：每单位 2 min */
+const VETRA_SEC_PER_UNIT = { lite: 30, research: 120 }
+
+function formatVetraEtaSeconds(totalSec) {
+  if (!Number.isFinite(totalSec) || totalSec < 0) return '—'
+  const s = Math.round(totalSec)
+  if (s < 60) return `${s}s`
+  const h = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  const sec = s % 60
+  if (h > 0) {
+    if (m === 0 && sec === 0) return `${h}h`
+    if (sec === 0) return `${h}h ${m}m`
+    return `${h}h ${m}m ${sec}s`
+  }
+  if (sec === 0) return `${m} min`
+  return `${m} min ${sec}s`
+}
+
+/** 最终分：A 最高，DC 最低（演示） */
+const VETRA_MOCK_COMPANIES = [
+  { id: 'v1', name: 'Nordic Logistics AB', meta: 'Stockholm · Logistics', grade: 'A' },
+  { id: 'v2', name: 'Helios Semiconductor GmbH', meta: 'Munich · Technology', grade: 'A-' },
+  { id: 'v3', name: 'Pacific Rim Trading Co.', meta: 'Singapore · Wholesale', grade: 'B+' },
+  { id: 'v4', name: 'Crescent BioPharma Inc.', meta: 'Boston · Healthcare', grade: 'B' },
+  { id: 'v5', name: 'Atlas Infrastructure Partners', meta: 'Dubai · Construction', grade: 'B-' },
+  { id: 'v6', name: 'Meridian Cloud Systems', meta: 'Dublin · Software', grade: 'C+' },
+  { id: 'v7', name: 'Jade River Manufacturing', meta: 'Shenzhen · Manufacturing', grade: 'C' },
+  { id: 'v8', name: 'Summit Capital Advisors', meta: 'London · Financial services', grade: 'C-' },
+  { id: 'v9', name: 'Verde Energy Solutions', meta: 'São Paulo · Energy', grade: 'B+' },
+  { id: 'v10', name: 'Polaris Retail Group', meta: 'Toronto · Retail', grade: 'B-' },
+  { id: 'v11', name: 'Aurora Media Holdings', meta: 'Los Angeles · Media', grade: 'C+' },
+  { id: 'v12', name: 'Keystone AgriTech', meta: 'Melbourne · Agriculture', grade: 'DC' },
+]
+
+function vetraCompanyGradeClass(grade) {
+  if (grade === 'A' || grade === 'A-') return 'vetraCompanyList__grade--high'
+  if (grade.startsWith('B')) return 'vetraCompanyList__grade--good'
+  if (grade.startsWith('C') && grade !== 'DC') return 'vetraCompanyList__grade--mid'
+  return 'vetraCompanyList__grade--low'
+}
 
 function findocStageTitle(stageId) {
   return FINDOC_STAGE_ITEMS.find((s) => s.id === stageId)?.title ?? ''
@@ -212,6 +259,99 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
   const headingTransitionRef = useRef(null)
   const [headingPair, setHeadingPair] = useState(null)
   const [idleHeadingStageId, setIdleHeadingStageId] = useState(activeStage)
+  const [vetraDistrictCountry, setVetraDistrictCountry] = useState('')
+  const [vetraDistrictRegion, setVetraDistrictRegion] = useState('')
+  const [vetraIndustryBroad, setVetraIndustryBroad] = useState('')
+  const [vetraIndustryDetail, setVetraIndustryDetail] = useState('')
+  const [vetraScaleCapital, setVetraScaleCapital] = useState('')
+  const [vetraScaleFinancing, setVetraScaleFinancing] = useState('')
+  const [vetraQtyVersion, setVetraQtyVersion] = useState('')
+  const [vetraQtyCount, setVetraQtyCount] = useState('')
+
+  /** 每格第二项可选：数量未填时按 1 估算时长 */
+  const vetraEffectiveQty = useMemo(() => {
+    const n = parseInt(String(vetraQtyCount).trim(), 10)
+    return Number.isFinite(n) && n >= 1 ? n : 1
+  }, [vetraQtyCount])
+
+  const vetraQtyEtaText = useMemo(() => {
+    const secPer =
+      vetraQtyVersion === 'lite' || vetraQtyVersion === 'research'
+        ? VETRA_SEC_PER_UNIT[vetraQtyVersion]
+        : null
+    const nRaw = parseInt(String(vetraQtyCount).trim(), 10)
+    const hasQty = Number.isFinite(nRaw) && nRaw >= 1
+    if (secPer == null) {
+      return 'Select report version (required) to see estimated runtime'
+    }
+    const q = hasQty ? nRaw : 1
+    const timeStr = formatVetraEtaSeconds(secPer * q)
+    if (!hasQty) {
+      return `Est. remaining: ~${timeStr} · quantity empty → default ×1`
+    }
+    return `Est. remaining: ~${timeStr}`
+  }, [vetraQtyVersion, vetraQtyCount])
+
+  const vetraEstimateTotalSec = useMemo(() => {
+    const secPer =
+      vetraQtyVersion === 'lite' || vetraQtyVersion === 'research'
+        ? VETRA_SEC_PER_UNIT[vetraQtyVersion]
+        : null
+    if (secPer == null) return null
+    return secPer * vetraEffectiveQty
+  }, [vetraQtyVersion, vetraEffectiveQty])
+
+  /** 进度条刻度：无有效数量时用 1 段 */
+  const vetraQtyUnitCount = useMemo(() => vetraEffectiveQty, [vetraEffectiveQty])
+
+  /** 四格各第一项必选，第二项可选 */
+  const vetraRequiredOk = useMemo(
+    () =>
+      vetraDistrictCountry !== '' &&
+      vetraIndustryBroad !== '' &&
+      vetraScaleCapital !== '' &&
+      vetraQtyVersion !== '',
+    [
+      vetraDistrictCountry,
+      vetraIndustryBroad,
+      vetraScaleCapital,
+      vetraQtyVersion,
+    ],
+  )
+
+  const [vetraSimProgressPct, setVetraSimProgressPct] = useState(0)
+  const [vetraRunActive, setVetraRunActive] = useState(false)
+  const vetraProgressRafRef = useRef(0)
+
+  useEffect(() => {
+    cancelAnimationFrame(vetraProgressRafRef.current)
+    if (themeClass !== 'theme-vetra') return undefined
+    setVetraSimProgressPct(0)
+    setVetraRunActive(false)
+    return undefined
+  }, [themeClass, vetraEstimateTotalSec])
+
+  useEffect(() => {
+    if (themeClass !== 'theme-vetra' || !vetraRunActive || vetraEstimateTotalSec == null) {
+      return undefined
+    }
+    cancelAnimationFrame(vetraProgressRafRef.current)
+    const totalMs = Math.max(400, vetraEstimateTotalSec * 1000)
+    setVetraSimProgressPct(0)
+    const t0 = performance.now()
+    const tick = (now) => {
+      const u = Math.min(1, (now - t0) / totalMs)
+      setVetraSimProgressPct(Math.round(u * 100))
+      if (u < 1) {
+        vetraProgressRafRef.current = requestAnimationFrame(tick)
+      } else {
+        setVetraSimProgressPct(100)
+        setVetraRunActive(false)
+      }
+    }
+    vetraProgressRafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(vetraProgressRafRef.current)
+  }, [themeClass, vetraRunActive, vetraEstimateTotalSec])
 
   useEffect(() => {
     if (themeClass !== 'theme-findoc') return undefined
@@ -556,7 +696,9 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
 
       <main className="finMain finMain--dashboard">
         <section
-          className={`finDocMaintenance finDocMaintenance--${themeClass.replace('theme-', '')}`}
+          className={`finDocMaintenance finDocMaintenance--${themeClass.replace('theme-', '')}${
+            themeClass === 'theme-vetra' ? ' finDocMaintenance--vetraDash' : ''
+          }`}
           role="status"
           aria-live="polite"
           aria-label={`${brandName} maintenance notice`}
@@ -825,6 +967,351 @@ function ThemedDocPage({ brandName, themeClass, trailColor, featuresTo }) {
                   ) : null}
                 </div>
               </div>
+            </div>
+          ) : themeClass === 'theme-vetra' ? (
+            <div className="vetraDashStack">
+            <div className="vetraDashSplit" aria-label="Vetra dashboard">
+              <div className="vetraDashSplit__panel vetraDashSplit__panel--left">
+                <div className="vetraDashSplit__leftMain">
+                <div className="vetraDashSplit__quad">
+                  <h3 className="vetraDashSplit__cellTitle">District</h3>
+                  <div className="vetraDashSplit__cellBody">
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--required"
+                      htmlFor="vetra-district-country"
+                    >
+                      Country
+                    </label>
+                    <select
+                      id="vetra-district-country"
+                      className="vetraDashSplit__select"
+                      value={vetraDistrictCountry}
+                      onChange={(e) => {
+                        setVetraDistrictCountry(e.target.value)
+                        setVetraDistrictRegion('')
+                      }}
+                      required
+                      aria-required="true"
+                      aria-label="Country"
+                    >
+                      <option value="" disabled>
+                        Select country
+                      </option>
+                      {VETRA_COUNTRY_OPTIONS.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--optional"
+                      htmlFor="vetra-district-region"
+                    >
+                      Province / state
+                    </label>
+                    <select
+                      id="vetra-district-region"
+                      className="vetraDashSplit__select"
+                      value={vetraDistrictRegion}
+                      onChange={(e) => setVetraDistrictRegion(e.target.value)}
+                      disabled={!vetraDistrictCountry}
+                      aria-label="Province or state (optional)"
+                    >
+                      <option value="">
+                        {vetraDistrictCountry
+                          ? 'Any / skip (optional)'
+                          : 'Select country first'}
+                      </option>
+                      {vetraRegionsForCountry(vetraDistrictCountry).map((r) => (
+                        <option
+                          key={`${vetraDistrictCountry}-${r.code}`}
+                          value={r.code}
+                        >
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  </div>
+                </div>
+                <div className="vetraDashSplit__quad">
+                  <h3 className="vetraDashSplit__cellTitle">Industry</h3>
+                  <div className="vetraDashSplit__cellBody">
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--required"
+                      htmlFor="vetra-industry-broad"
+                    >
+                      Broad industry
+                    </label>
+                    <select
+                      id="vetra-industry-broad"
+                      className="vetraDashSplit__select"
+                      value={vetraIndustryBroad}
+                      onChange={(e) => setVetraIndustryBroad(e.target.value)}
+                      required
+                      aria-required="true"
+                      aria-label="Broad industry category"
+                    >
+                      <option value="" disabled>
+                        Select category
+                      </option>
+                      <option value="mfg">Manufacturing</option>
+                      <option value="svc">Services</option>
+                      <option value="tech">Technology</option>
+                      <option value="fin">Financial services</option>
+                      <option value="hc">Healthcare</option>
+                    </select>
+                  </div>
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--optional"
+                      htmlFor="vetra-industry-detail"
+                    >
+                      Industry detail
+                    </label>
+                    <input
+                      id="vetra-industry-detail"
+                      type="text"
+                      className="vetraDashSplit__input"
+                      value={vetraIndustryDetail}
+                      onChange={(e) => setVetraIndustryDetail(e.target.value)}
+                      placeholder="Optional · segment or niche"
+                      autoComplete="off"
+                      aria-label="Industry detail (optional)"
+                    />
+                  </div>
+                  </div>
+                </div>
+                <div className="vetraDashSplit__quad">
+                  <h3 className="vetraDashSplit__cellTitle">Scale</h3>
+                  <div className="vetraDashSplit__cellBody">
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--required"
+                      htmlFor="vetra-scale-capital"
+                    >
+                      Registered capital
+                    </label>
+                    <select
+                      id="vetra-scale-capital"
+                      className="vetraDashSplit__select"
+                      value={vetraScaleCapital}
+                      onChange={(e) => setVetraScaleCapital(e.target.value)}
+                      required
+                      aria-required="true"
+                      aria-label="Registered capital band"
+                    >
+                      <option value="" disabled>
+                        Select band
+                      </option>
+                      <option value="xs">&lt; 1M</option>
+                      <option value="s">1M – 10M</option>
+                      <option value="m">10M – 50M</option>
+                      <option value="l">50M – 200M</option>
+                      <option value="xl">&gt; 200M</option>
+                    </select>
+                  </div>
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--optional"
+                      htmlFor="vetra-scale-financing"
+                    >
+                      Financing
+                    </label>
+                    <select
+                      id="vetra-scale-financing"
+                      className="vetraDashSplit__select"
+                      value={vetraScaleFinancing}
+                      onChange={(e) => setVetraScaleFinancing(e.target.value)}
+                      aria-label="Financing situation (optional)"
+                    >
+                      <option value="">Skip (optional)</option>
+                      <option value="boot">Bootstrapped</option>
+                      <option value="seed">Seed / angel</option>
+                      <option value="series-a">Series A</option>
+                      <option value="series-bplus">Series B+</option>
+                      <option value="public">Public / PE-backed</option>
+                    </select>
+                  </div>
+                  </div>
+                </div>
+                <div className="vetraDashSplit__quad">
+                  <h3 className="vetraDashSplit__cellTitle">Quantity</h3>
+                  <div className="vetraDashSplit__cellBody">
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--required"
+                      htmlFor="vetra-qty-version"
+                    >
+                      Report version
+                    </label>
+                    <select
+                      id="vetra-qty-version"
+                      className="vetraDashSplit__select"
+                      value={vetraQtyVersion}
+                      onChange={(e) => setVetraQtyVersion(e.target.value)}
+                      required
+                      aria-required="true"
+                      aria-label="Simplified or research version"
+                    >
+                      <option value="" disabled>
+                        Select version
+                      </option>
+                      <option value="lite">Simplified</option>
+                      <option value="research">Research</option>
+                    </select>
+                  </div>
+                  <div className="vetraDashSplit__fieldGroup">
+                    <label
+                      className="vetraDashSplit__label vetraDashSplit__label--optional"
+                      htmlFor="vetra-qty-count"
+                    >
+                      Quantity
+                    </label>
+                    <input
+                      id="vetra-qty-count"
+                      type="number"
+                      className="vetraDashSplit__input"
+                      min={1}
+                      step={1}
+                      placeholder="Optional · default 1"
+                      aria-label="Quantity (optional)"
+                      value={vetraQtyCount}
+                      onChange={(e) => setVetraQtyCount(e.target.value)}
+                    />
+                  </div>
+                  </div>
+                </div>
+                </div>
+                <div className="vetraDashSplit__etaRow">
+                  <p
+                    className="vetraDashSplit__eta vetraDashSplit__eta--foot"
+                    aria-live="polite"
+                  >
+                    {vetraQtyEtaText}
+                  </p>
+                  <div className="vetraDashSplit__etaActions">
+                    <button
+                      type="button"
+                      className="vetraRunProgress__cancel vetraRunProgress__cancel--inline"
+                      disabled={!vetraRunActive && vetraSimProgressPct === 0}
+                      onClick={() => {
+                        cancelAnimationFrame(vetraProgressRafRef.current)
+                        setVetraRunActive(false)
+                        setVetraSimProgressPct(0)
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="vetraRunProgress__start vetraRunProgress__start--inline"
+                      disabled={
+                        !vetraRequiredOk ||
+                        vetraEstimateTotalSec == null ||
+                        vetraRunActive
+                      }
+                      onClick={() => setVetraRunActive(true)}
+                    >
+                      Start
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="vetraDashSplit__panel vetraDashSplit__panel--right">
+                <h2 className="vetraDashSplit__cellTitle">Company list</h2>
+                <ul className="vetraCompanyList" aria-label="Mock company results">
+                  {VETRA_MOCK_COMPANIES.map((row) => (
+                    <li key={row.id} className="vetraCompanyList__item">
+                      <div className="vetraCompanyList__text">
+                        <span className="vetraCompanyList__name">{row.name}</span>
+                        <span className="vetraCompanyList__meta">{row.meta}</span>
+                      </div>
+                      <div className="vetraCompanyList__tail">
+                        <span
+                          className={`vetraCompanyList__grade ${vetraCompanyGradeClass(row.grade)}`}
+                          title="Final score"
+                        >
+                          {row.grade}
+                        </span>
+                        <button
+                          type="button"
+                          className="vetraCompanyList__download"
+                          aria-label={`Download ${row.name}`}
+                        >
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                          </svg>
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="vetraRunProgressBlock">
+              <div
+                className="vetraRunProgress"
+                role="progressbar"
+                aria-busy={vetraRunActive}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={
+                  vetraEstimateTotalSec == null ? 0 : vetraSimProgressPct
+                }
+                aria-label="Simulated run progress by estimated runtime"
+              >
+                {vetraQtyUnitCount >= 2 && vetraQtyUnitCount <= 20 ? (
+                  <div className="vetraRunProgress__ticks" aria-hidden="true">
+                    {Array.from({ length: vetraQtyUnitCount - 1 }, (_, i) => (
+                      <span
+                        key={i}
+                        className="vetraRunProgress__tick"
+                        style={{
+                          left: `${((i + 1) / vetraQtyUnitCount) * 100}%`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+                <div
+                  className="vetraRunProgress__fill"
+                  style={{
+                    width:
+                      vetraEstimateTotalSec == null
+                        ? '0%'
+                        : `${vetraSimProgressPct}%`,
+                  }}
+                />
+              </div>
+              <p className="vetraRunProgress__caption" aria-live="polite">
+                {!vetraRequiredOk
+                  ? 'Fill each quadrant’s first field (required) to enable Start'
+                  : vetraEstimateTotalSec == null
+                    ? 'Select report version to enable the run bar'
+                    : vetraRunActive
+                      ? `Running… ${vetraSimProgressPct}% · ~${formatVetraEtaSeconds(vetraEstimateTotalSec)} total`
+                      : vetraSimProgressPct >= 100
+                        ? `Complete · ~${formatVetraEtaSeconds(vetraEstimateTotalSec)} · press Start to replay`
+                        : `Ready · ~${formatVetraEtaSeconds(vetraEstimateTotalSec)} · press Start`}
+              </p>
+            </div>
             </div>
           ) : (
             <h1>Under maintenance</h1>

@@ -58,12 +58,13 @@ const CONNECT_ROWS = [
   },
 ]
 
-export function FinDocDashboard() {
+export function FinDocDashboard({ variant = 'findoc' }) {
   const weekMenuId = useId()
   const [weekOpen, setWeekOpen] = useState(false)
+  const vetraMod = variant === 'vetra' ? ' finDocDash--vetra' : ''
 
   return (
-    <div className="finDocDash">
+    <div className={`finDocDash${vetraMod}`}>
       <div className="finDocDash__grid">
         {/* Income Tracker */}
         <section className="finDocDash-card finDocDash-card--income" aria-labelledby="finDocDash-income-title">

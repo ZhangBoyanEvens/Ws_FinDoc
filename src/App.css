@@ -1341,6 +1341,578 @@ body.arbixWaveScroll::-webkit-scrollbar-thumb:hover {
     0 16px 44px rgba(29, 78, 216, 0.38);
 }
 
+/* Vetra /vetra：左约 55%、右约 45%（11fr / 9fr），两栏同高（视口减顶栏）；四周留白；整块垂直居中 */
+.finDocMaintenance--vetraDash {
+  --vetra-dash-pad: clamp(0.75rem, 2vw, 1.5rem);
+  --vetra-dash-inner-h: calc(100svh - 64px - 2 * var(--vetra-dash-pad));
+  /* 先面积 ×0.6（√0.6），再整体线性放大 15% */
+  --vetra-dash-scale: calc(0.7745966692 * 1.15);
+  padding: var(--vetra-dash-pad);
+  min-height: calc(100svh - 64px);
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+  /* 勿用 place-items: unset，会冲掉 justify-items，导致整块偏左 */
+  justify-items: center;
+  align-items: center;
+}
+
+.finDocMaintenance--vetraDash > .vetraDashStack {
+  grid-row: 2;
+  justify-self: center;
+  margin-inline: auto;
+}
+
+.vetraDashStack {
+  width: calc(100% * var(--vetra-dash-scale));
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(0.45rem, 1.15vw, 0.7rem);
+}
+
+.vetraDashSplit {
+  width: 100%;
+  min-height: calc(var(--vetra-dash-inner-h) * var(--vetra-dash-scale));
+  height: calc(var(--vetra-dash-inner-h) * var(--vetra-dash-scale));
+  display: grid;
+  /* 右栏 Company list 略加宽（约 45% : 左约 55%） */
+  grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+  gap: clamp(0.75rem, 1.8vw, 1.2rem);
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+/* /vetra：主区域下方，按预计总时长线性推进的模拟进度 */
+.vetraRunProgressBlock {
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.vetraRunProgress__start {
+  margin: 0;
+  padding: 0.38rem 1.35rem;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: clamp(0.68rem, 1.1vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #eff6ff;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
+  box-shadow:
+    0 0 0 1px rgba(191, 219, 254, 0.45),
+    0 4px 14px rgba(37, 99, 235, 0.35);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.vetraRunProgress__start:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(191, 219, 254, 0.55),
+    0 6px 18px rgba(29, 78, 216, 0.4);
+}
+
+.vetraRunProgress__start:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.vetraRunProgress__start:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.vetraRunProgress__start:focus {
+  outline: none;
+}
+
+.vetraRunProgress__start:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.65);
+  outline-offset: 2px;
+}
+
+.vetraRunProgress__start--inline {
+  flex-shrink: 0;
+  padding: 0.3rem 1rem;
+  font-size: clamp(0.62rem, 1vw, 0.72rem);
+}
+
+.vetraRunProgress {
+  position: relative;
+  width: 100%;
+  height: 0.48rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.14);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.vetraRunProgress__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #60a5fa 0%, #2563eb 55%, #1d4ed8 100%);
+  z-index: 1;
+  transition: none;
+}
+
+.vetraRunProgress__ticks {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.vetraRunProgress__tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 0 0 0.5px rgba(30, 64, 175, 0.18);
+}
+
+.vetraRunProgress__caption {
+  margin: 0;
+  font-size: clamp(0.56rem, 0.92vw, 0.66rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(37, 99, 235, 0.62);
+  line-height: 1.35;
+  text-align: center;
+}
+
+.vetraDashSplit__panel {
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
+  border: 2px solid rgba(37, 99, 235, 0.72);
+  border-radius: 0.85rem;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(219, 234, 254, 0.35);
+}
+
+.vetraDashSplit__panel--right {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.65rem, 1.5vw, 1rem) clamp(0.6rem, 1.4vw, 0.9rem);
+  min-width: 0;
+  min-height: 0;
+  gap: clamp(0.45rem, 1.2vw, 0.65rem);
+}
+
+.vetraCompanyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 0.45rem;
+  background: linear-gradient(180deg, rgba(248, 250, 255, 0.9) 0%, #ffffff 12%);
+}
+
+.vetraCompanyList__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(0.35rem, 1vw, 0.5rem);
+  padding: clamp(0.45rem, 1.1vw, 0.58rem) clamp(0.5rem, 1.15vw, 0.65rem);
+  border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+  transition: background-color 0.15s ease;
+}
+
+.vetraCompanyList__item:last-child {
+  border-bottom: none;
+}
+
+.vetraCompanyList__item:hover {
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.vetraCompanyList__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.vetraCompanyList__tail {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(0.35rem, 1vw, 0.55rem);
+}
+
+/* 最终分：A / A- … DC（演示色阶） */
+.vetraCompanyList__grade {
+  flex-shrink: 0;
+  min-width: 1.85rem;
+  padding: 0.12rem 0.28rem;
+  border-radius: 0.3rem;
+  font-size: clamp(0.58rem, 0.95vw, 0.68rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.vetraCompanyList__grade--high {
+  color: rgba(21, 128, 61, 0.95);
+  background: rgba(220, 252, 231, 0.85);
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.vetraCompanyList__grade--good {
+  color: rgba(30, 64, 175, 0.92);
+  background: rgba(219, 234, 254, 0.75);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+.vetraCompanyList__grade--mid {
+  color: rgba(120, 53, 15, 0.9);
+  background: rgba(254, 243, 199, 0.65);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.vetraCompanyList__grade--low {
+  color: rgba(127, 29, 29, 0.92);
+  background: rgba(254, 226, 226, 0.72);
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+/* 仅图标，无边框、无外层框 */
+.vetraCompanyList__download {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0.2rem;
+  border: none;
+  border-radius: 0.3rem;
+  background: transparent;
+  color: rgba(37, 99, 235, 0.72);
+  cursor: pointer;
+  line-height: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.vetraCompanyList__download:hover {
+  color: rgba(29, 78, 216, 0.95);
+}
+
+.vetraCompanyList__download:focus {
+  outline: none;
+}
+
+.vetraCompanyList__download:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.45);
+  outline-offset: 1px;
+}
+
+.vetraCompanyList__name {
+  font-size: clamp(0.68rem, 1.1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(30, 58, 138, 0.96);
+  line-height: 1.3;
+}
+
+.vetraCompanyList__meta {
+  font-size: clamp(0.58rem, 0.95vw, 0.68rem);
+  color: rgba(37, 99, 235, 0.62);
+  line-height: 1.25;
+}
+
+.vetraDashSplit__panel--left {
+  --vetra-left-pad: clamp(0.55rem, 1.35vw, 0.85rem);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--vetra-left-pad);
+  box-sizing: border-box;
+}
+
+.vetraDashSplit__leftMain {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0;
+}
+
+/* 中央十字：仅覆盖四象限区域，线头线尾渐变消隐 */
+.vetraDashSplit__leftMain::before,
+.vetraDashSplit__leftMain::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vetraDashSplit__leftMain::before {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1.5px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(37, 99, 235, 0.08) 8%,
+    rgba(37, 99, 235, 0.52) 22%,
+    rgba(29, 78, 216, 0.58) 50%,
+    rgba(37, 99, 235, 0.52) 78%,
+    rgba(37, 99, 235, 0.08) 92%,
+    transparent 100%
+  );
+}
+
+.vetraDashSplit__leftMain::after {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(37, 99, 235, 0.08) 8%,
+    rgba(37, 99, 235, 0.52) 22%,
+    rgba(29, 78, 216, 0.58) 50%,
+    rgba(37, 99, 235, 0.52) 78%,
+    rgba(37, 99, 235, 0.08) 92%,
+    transparent 100%
+  );
+}
+
+/* 四象限：无独立小框；内容叠在十字之上 */
+.vetraDashSplit__quad {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.45rem, 1.2vw, 0.7rem);
+  padding: clamp(0.65rem, 1.6vw, 1rem) clamp(0.6rem, 1.45vw, 0.9rem);
+}
+
+.vetraDashSplit__cellTitle {
+  flex-shrink: 0;
+  margin: 0;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.16);
+  font-family: 'Michroma', 'Inter', system-ui, sans-serif;
+  font-size: clamp(1.05rem, 1.9vw, 1.2rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(30, 64, 175, 0.94);
+  line-height: 1.2;
+}
+
+.vetraDashSplit__cellBody {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: clamp(0.6rem, 1.9vh, 1.05rem);
+}
+
+.vetraDashSplit__fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.28rem, 0.75vw, 0.4rem);
+  min-width: 0;
+}
+
+.vetraDashSplit__eta {
+  flex-shrink: 0;
+  margin: 0;
+  margin-top: 0.1rem;
+  font-size: clamp(0.58rem, 0.98vw, 0.68rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  color: rgba(37, 99, 235, 0.72);
+}
+
+.vetraDashSplit__etaRow {
+  flex-shrink: 0;
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.4rem, 1.15vw, 0.7rem);
+  width: 100%;
+  max-width: 36rem;
+  margin-top: 0;
+  padding-top: clamp(0.5rem, 1.35vw, 0.75rem);
+  border-top: 1px solid rgba(37, 99, 235, 0.14);
+  box-sizing: border-box;
+}
+
+.vetraDashSplit__eta--foot {
+  flex: 1 1 12rem;
+  min-width: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: center;
+  border-top: none;
+  padding-top: 0;
+}
+
+.vetraDashSplit__etaActions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.35rem, 1vw, 0.5rem);
+  flex-shrink: 0;
+}
+
+.vetraRunProgress__cancel {
+  margin: 0;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: clamp(0.62rem, 1vw, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(37, 99, 235, 0.88);
+  background: transparent;
+  border: 1.5px solid rgba(37, 99, 235, 0.45);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.vetraRunProgress__cancel--inline {
+  flex-shrink: 0;
+}
+
+.vetraRunProgress__cancel:hover:not(:disabled) {
+  color: rgba(29, 78, 216, 0.98);
+  border-color: rgba(29, 78, 216, 0.65);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.vetraRunProgress__cancel:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.vetraRunProgress__cancel:focus {
+  outline: none;
+}
+
+.vetraRunProgress__cancel:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+}
+
+.vetraDashSplit__label {
+  font-size: clamp(0.64rem, 1.12vw, 0.76rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: rgba(30, 64, 175, 0.78);
+  line-height: 1.35;
+}
+
+.vetraDashSplit__label--required::after {
+  content: ' *';
+  font-weight: 800;
+  color: rgba(185, 28, 28, 0.9);
+}
+
+.vetraDashSplit__label--optional::after {
+  content: ' · optional';
+  font-weight: 500;
+  font-size: 0.78em;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: rgba(37, 99, 235, 0.52);
+}
+
+.vetraDashSplit__select,
+.vetraDashSplit__input {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  min-height: 2.35rem;
+  padding: 0.42rem 0.55rem;
+  font-family: inherit;
+  font-size: clamp(0.72rem, 1.2vw, 0.84rem);
+  line-height: 1.35;
+  color: rgba(30, 58, 138, 0.95);
+  background-color: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.42);
+  border-radius: 0.42rem;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
+}
+
+.vetraDashSplit__select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.vetraDashSplit__input {
+  cursor: text;
+}
+
+.vetraDashSplit__input::placeholder {
+  color: rgba(30, 64, 175, 0.38);
+}
+
+.vetraDashSplit__select:hover,
+.vetraDashSplit__input:hover {
+  border-color: rgba(37, 99, 235, 0.65);
+}
+
+.vetraDashSplit__select:focus,
+.vetraDashSplit__input:focus {
+  outline: none;
+  border-color: rgba(29, 78, 216, 0.95);
+  box-shadow:
+    inset 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 0 0 2px rgba(59, 130, 246, 0.28);
+}
+
 .finDocMaintenance--arbix > h1 {
   background: linear-gradient(135deg, #b91c1c 0%, #dc2626 55%, #ef4444 100%);
   color: #fef2f2;

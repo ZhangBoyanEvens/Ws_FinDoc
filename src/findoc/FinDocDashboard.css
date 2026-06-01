@@ -20,6 +20,34 @@
   margin: 0 auto;
 }
 
+/* Vetra：与 theme-vetra 蓝系导航/网格一致 */
+.finDocDash--vetra {
+  --fd-page: #eef2ff;
+  --fd-surface: #ffffff;
+  --fd-text: #0f172a;
+  --fd-muted: #64748b;
+  --fd-border: rgba(30, 58, 138, 0.12);
+  --fd-shadow:
+    0 12px 32px rgba(30, 58, 138, 0.1),
+    0 4px 12px rgba(15, 23, 42, 0.06);
+  --fd-blue: #1e40af;
+  --fd-blue-soft: #dbeafe;
+  --fd-accent: #2563eb;
+}
+
+.finDocDash--vetra .finDocDash-card--premium {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 42%, #a5b4fc 100%);
+}
+
+.finDocDash--vetra .finDocDash-premiumDesc {
+  color: #3730a3;
+}
+
+.finDocDash--vetra .finDocDash-dateBtn {
+  background: #eef2ff;
+  border-color: rgba(30, 58, 138, 0.18);
+}
+
 .finDocDash__grid {
   display: grid;
   gap: 20px;
